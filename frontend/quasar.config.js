@@ -92,6 +92,7 @@ module.exports = configure(function (/* ctx */) {
             dirs: [
               // './hooks',
               "src/composables", // only root modules
+              "src/stores",
               "src/components/**", // all nested modules
             ],
           },

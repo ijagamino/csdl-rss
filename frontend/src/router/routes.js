@@ -14,15 +14,7 @@ const routes = [
     children: [
       {
         path: "dashboard",
-        component: () => import("pages/dashboard/Index.vue"),
-      },
-      {
-        path: "dashboard",
-        component: () => import("pages/dashboard/Index.vue"),
-      },
-      {
-        path: "dashboard",
-        component: () => import("pages/dashboard/Index.vue"),
+        component: () => import("pages/reports/Index.vue"),
       },
     ],
   },

@@ -42,7 +42,3 @@
     </q-list>
   </div>
 </template>
-
-<script setup>
-import SidebarItem from "@/components/SidebarItem.vue";
-</script>

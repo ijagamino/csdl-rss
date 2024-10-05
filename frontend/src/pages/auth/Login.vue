@@ -1,9 +1,7 @@
 <template>
-  <div v-if="authenticated">Authenticated</div>
-  <div v-else>Not authenticated</div>
-  {{ auth.username }}
+  {{ authStore.username }}
   <q-form>
-    <q-input label="email" filled v-model="form.email" />
+    <q-input label="Email" filled v-model="form.email" />
     <q-input
       label="Password"
       filled
@@ -18,19 +16,16 @@
         />
       </template>
     </q-input>
-    <VButton label="Log In" @click="login(form)" />
+    <VButton label="Log In" @click="authStore.login(form)" />
   </q-form>
 </template>
 
 <script setup>
 import axios from "axios";
 import { api } from "boot/axios";
-import { useAuthStore } from "../../stores/auth.js";
+import { useAuthStore } from "stores/auth.js";
 
-const { authenticated, user, login, attempt } = useAuthStore();
-const auth = useAuthStore();
-
-console.log(auth.user);
+const authStore = useAuthStore();
 
 const form = reactive({
   email: null,

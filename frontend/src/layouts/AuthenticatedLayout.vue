@@ -14,7 +14,7 @@
     </q-header>
 
     <q-drawer v-model="leftDrawerOpen" side="left" overlay bordered>
-      <Sidebar />
+      <SidebarPanel />
     </q-drawer>
 
     <q-page-container>

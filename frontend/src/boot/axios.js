@@ -10,6 +10,9 @@ import axios from "axios";
 
 axios.defaults.withCredentials = true;
 axios.defaults.withXSRFToken = true;
+axios.defaults.baseURL = "http://localhost:8000";
+// axios.defaults.headers.post["Content-Type"] = "application/json";
+// axios.defaults.headers["Access-Control-Allow-Origin"] = "*";
 
 const api = axios.create({ baseURL: "http://localhost:8000/api" });
 
