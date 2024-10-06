@@ -1,5 +1,4 @@
 <template>
-  <Head title="Reports" />
   <!-- <template #header> Report #{{ report.id }} </template> -->
   <!-- <div class="mt-8 flex flex-wrap px-4 gap-8"> -->
   <!-- <ReportCard :report :startTime :endTime /> -->
@@ -10,7 +9,6 @@
 </template>
 
 <script setup>
-import { Head } from "@inertiajs/vue3";
 import ReportCard from "@/components/ReportCard.vue";
 
 defineProps({

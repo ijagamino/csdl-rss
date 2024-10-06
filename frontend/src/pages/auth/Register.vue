@@ -1,5 +1,4 @@
 <template>
-  <Head title="Register" />
   <!-- <FormPanel @submit.prevent="submit()"> -->
   <FormInput
     id="email"
@@ -34,8 +33,6 @@
 </template>
 
 <script setup>
-import { Head, useForm } from "@inertiajs/vue3";
-
 const form = useForm({
   email: null,
   username: null,

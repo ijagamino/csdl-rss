@@ -88,6 +88,22 @@ module.exports = configure(function (/* ctx */) {
               "vue",
               "vue-router",
               "@vueuse/core",
+              "pinia",
+              {
+                "pinia-plugin-persistedstate": [
+                  ["default", "piniaPluginPersistedstate"],
+                ],
+                axios: [
+                  ["default", "axios"], // import { default as axios } from 'axios',
+                ],
+                "boot/axios": ["api"],
+                "@vueuse/core": [
+                  // named imports
+                  "useMouse", // import { useMouse } from '@vueuse/core',
+                  // alias
+                  ["useFetch", "useMyFetch"], // import { useFetch as useMyFetch } from '@vueuse/core',
+                ],
+              },
             ],
             dirs: [
               // './hooks',

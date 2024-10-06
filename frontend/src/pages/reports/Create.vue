@@ -1,5 +1,4 @@
 <template>
-  <Head title="Reporting" />
   <PageHeader> Reporting </PageHeader>
   <q-form>
     <q-select
@@ -44,8 +43,6 @@
 </template>
 
 <script setup>
-import { Head, useForm } from "@inertiajs/vue3";
-import { computed, watch } from "vue";
 import { useQuasar } from "quasar";
 
 const $q = useQuasar();
@@ -91,7 +88,7 @@ const disabledSlots = computed(() => {
     return;
   }
   const result = props.unavailableSlots[date.value].slots.map(
-    (slot) => `${slot.startTime} - ${slot.endTime}`,
+    (slot) => `${slot.startTime} - ${slot.endTime}`
   );
 
   return result;
@@ -101,14 +98,14 @@ const availableSlots = computed(() => {
   return props.timeSlots.map((slot) => ({
     label: `${slot.startTime} - ${slot.endTime}`,
     disable: disabledSlots.value?.includes(
-      `${slot.startTime} - ${slot.endTime}`,
+      `${slot.startTime} - ${slot.endTime}`
     ),
   }));
 });
 
 const isTaken = (slot) => {
   const unavailableForDate = props.unavailableSlots.find(
-    (entry) => entry.date === date.value,
+    (entry) => entry.date === date.value
   );
 
   // If there are no unavailable slots for the selected date, return false
@@ -124,6 +121,6 @@ watch(
   () => form.date,
   () => {
     form.time = null;
-  },
+  }
 );
 </script>

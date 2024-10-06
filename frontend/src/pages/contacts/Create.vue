@@ -1,5 +1,4 @@
 <template>
-  <Head title="Contact" />
   <PageHeader> Contact Us </PageHeader>
   <Card class="flex gap-2">
     <template #content>
@@ -34,15 +33,6 @@
 </template>
 
 <script setup>
-import { Head, useForm } from "@inertiajs/vue3";
-import FormInputText from "@/components/FormInputText.vue";
-import FormTextarea from "@/components/FormTextarea.vue";
-
-const form = useForm({
-  name: null,
-  content: null,
-});
-
 const submit = () => {
   form.post("/contact");
 };

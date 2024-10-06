@@ -1,5 +1,4 @@
 <template>
-  <Head title="Archives" />
   <PageHeader> Archives </PageHeader>
 
   <q-input
@@ -23,9 +22,6 @@
 </template>
 
 <script setup>
-import { Head } from "@inertiajs/vue3";
-import { ref } from "vue";
-
 defineProps({
   reports: Object,
 });

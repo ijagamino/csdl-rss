@@ -1,5 +1,4 @@
 <template>
-  <Head title="Dashboard" />
   <PageHeader>Dashboard</PageHeader>
   <q-btn-group>
     <Button
@@ -29,11 +28,6 @@
 </template>
 
 <script setup>
-import { Head } from "@inertiajs/vue3";
-import { computed } from "vue";
-
-const dashboardIndex = computed(() => route("dashboard.index"));
-
 defineProps({
   reports: Object,
 });

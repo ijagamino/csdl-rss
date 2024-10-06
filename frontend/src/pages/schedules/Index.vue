@@ -1,5 +1,4 @@
 <template>
-  <Head title="Schedules" />
   <PageHeader>Schedules</PageHeader>
 
   <q-select
@@ -37,9 +36,6 @@
 </template>
 
 <script setup>
-import { Head } from "@inertiajs/vue3";
-import { ref } from "vue";
-
 const options = ["Name 1", "Name 2"];
 
 const search = ref(null);

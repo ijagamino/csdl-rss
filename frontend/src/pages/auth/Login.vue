@@ -21,10 +21,6 @@
 </template>
 
 <script setup>
-import axios from "axios";
-import { api } from "boot/axios";
-import { useAuthStore } from "stores/auth.js";
-
 const authStore = useAuthStore();
 
 const form = reactive({

@@ -1,6 +1,5 @@
 <template>
-  <Head title="Contact" />
-  <PageHeader > Contact Us </PageHeader>
+  <PageHeader> Contact Us </PageHeader>
   <Card class="flex gap-2">
     <template #content>
       <form class="flex flex-col gap-4">
@@ -28,14 +27,12 @@
   <p class="pt-4">
     or alternatively, call us at:
     <span class="block text-3xl font-semibold text-blue-800"
-    >09xx-xxx-xxxx</span
+      >09xx-xxx-xxxx</span
     >
   </p>
 </template>
 
 <script setup>
-import { Head, useForm } from "@inertiajs/vue3";
-
 const form = useForm({
   name: null,
   content: null,

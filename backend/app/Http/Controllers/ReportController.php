@@ -18,17 +18,22 @@ class ReportController extends Controller
     {
         $user = $request->user();
 
-        $reports = $user->can('viewAny', Report::class)
-            ? Report::query()
-                ->with('appointment:report_id,date,start_time,end_time')->get()
-            : Report::query()
-                ->whereBelongsTo($user)
-                ->where('status', '!=', 'completed')
-                ->when($request->status, fn ($query, $status) => $query->where('status', $status))
-                ->with('appointment:report_id,date,start_time,end_time')
-                ->get();
+        // $reports = $user->can('viewAny', Report::class)
+        //     ? Report::query()
+        //         ->with('appointment:report_id,date,start_time,end_time')->get()
+        //     : Report::query()
+        //         ->whereBelongsTo($user)
+        //         ->where('status', '!=', 'completed')
+        //         ->when($request->status, fn ($query, $status) => $query->where('status', $status))
+        //         ->with('appointment:report_id,date,start_time,end_time')
+        //         ->get();
+        //
+        $reports = Report::all();
 
-        // return response()->toJson();
+        // return $request->user();
+        return response()->json([
+            'reports' => $reports,
+        ]);
         // return ('Dashboard/Index', [
         //     'reports' => $reports,
         //     'filters' => $request->only('status'),

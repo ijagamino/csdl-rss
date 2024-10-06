@@ -9,18 +9,22 @@ use App\Models\Report;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+Route::controller(ReportController::class)->group(function () {
+    // Route::get('/reports', 'index')->name('reports.index')->can('view', 'report');
+    // Route::get('/reports', function (Request $request) {
+    //     return $request->user();
+    // });
+    Route::get('/reports', 'index')->name('reports.index');
+    Route::post('/reports', 'store')->name('reports.store')->can('create', Report::class);
+    Route::get('/reports/{report}', 'show')->name('reports.show')->can('view', 'report');
+});
+
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
 
     Route::get('/dashboard', DashboardController::class)->name('dashboard.index');
-
-    Route::controller(ReportController::class)->group(function () {
-        Route::get('/reports', 'index')->name('reports.index')->can('view', 'report');
-        Route::post('/reports', 'store')->name('reports.store')->can('create', Report::class);
-        Route::get('/reports/{report}', 'show')->name('reports.show')->can('view', 'report');
-    });
 
     Route::controller(ContactController::class)->group(function () {
         Route::get('/contacts', 'index')->name('contacts.index');
