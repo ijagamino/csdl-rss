@@ -15,10 +15,36 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
+        // User::factory()->create([
+        //     'name' => 'Test User',
+        //     'email' => 'test@example.com',
+        // ]);
+
         User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-            'password' => 'password',
+            'username' => 'student',
+            'email' => 'student@example.com',
+            'password' => 'student',
+            'first_name' => 'Student',
+            'last_name' => 'User',
+        ]);
+
+        User::factory()->create([
+            'username' => 'staff',
+            'email' => 'staff@example.com',
+            'password' => 'staff',
+            'first_name' => 'Staff',
+            'last_name' => 'User',
+            'role' => 'staff',
+        ]);
+
+        User::factory(10)->create();
+
+        $this->call([
+            ReportSeeder::class,
+        ]);
+
+        $this->call([
+            AppointmentSeeder::class,
         ]);
     }
 }
