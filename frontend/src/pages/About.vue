@@ -20,13 +20,20 @@
 
   <section class="mt-4">
     <header class="uppercase">
-      <h2 class="text-lg font-semibold">Profiles</h2>
+      <h2>Profiles</h2>
     </header>
-    <div class="pt-2 grid gap-4 grid-cols-2">
-      <DeveloperFigure />
-      <DeveloperFigure />
-      <DeveloperFigure />
-      <DeveloperFigure />
+    <div class="row">
+      <q-item class="col-12 col-lg-6 col-xl-4" clickable v-ripple>
+        <q-item-section side>
+          <q-avatar size="128px">
+            <img src="https://placehold.co/400" />
+          </q-avatar>
+        </q-item-section>
+        <q-item-section>
+          <q-item-label>John Doe</q-item-label>
+          <q-item-label caption>Developer</q-item-label>
+        </q-item-section>
+      </q-item>
     </div>
   </section>
 </template>

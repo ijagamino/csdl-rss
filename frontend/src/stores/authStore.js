@@ -1,46 +1,59 @@
-import axios from "axios";
-import { api } from "boot/axios";
-import { defineStore } from "pinia";
-
 export const useAuthStore = defineStore(
   "auth",
   () => {
     const user = ref(null);
     const token = ref(localStorage.getItem("token") || "");
 
+    const errors = ref({});
+
     const router = useRouter();
 
-    const login = async (credentials) => {
-      await axios.get("http://localhost:8000/sanctum/csrf-cookie");
+    const { mutate } = useMutation({
+      mutationFn: async (form) => {
+        await axios.get("sanctum/csrf-cookie");
+        await axios.post("login", form);
+      },
+      onError: (err) => {
+        errors.value = err.response.data.errors;
+        $q.notify({
+          message: "Log in fail",
+          color: "red",
+        });
+      },
+      onSuccess: async () => {
+        const { data } = await api.get("/user");
 
-      try {
-        await axios.post("http://localhost:8000/login", credentials);
-      } catch (e) {
-        return Promise.reject(e.response.data.errors);
-      }
+        user.value = data;
 
-      const { data } = await api.get("/user");
+        router.push({ name: "reports.index" });
 
-      user.value = data;
+        $q.notify({
+          message: "Logged in successfully!",
+          color: "positive",
+        });
+      },
+    });
 
-      await router.push({ name: "reports" });
-
-      // reroute to dashboard
+    const login = (form) => {
+      mutate({
+        email: form.email,
+        password: form.password,
+      });
     };
 
     const logout = async () => {
       try {
         await axios.post("/logout");
-      } catch (e) {
-        return Promise.reject(e.response.data.errors);
+      } catch (error) {
+        return Promise.reject(err.response.data.errors);
       }
 
-      await router.push({ name: "welcome" });
+      router.push({ name: "welcome" });
       user.value = null;
-      token.value = ""; // reroute to welcome
+      token.value = "";
     };
 
-    return { user, token, login, logout };
+    return { user, token, errors, login, logout };
   },
   {
     persist: true,

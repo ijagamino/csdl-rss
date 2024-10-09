@@ -50,17 +50,32 @@ const routes = [
     children: [
       {
         path: "reports",
-        name: "reports",
-        component: () => import("pages/reports/Index.vue"),
+        children: [
+          {
+            path: "/reports",
+            name: "reports.index",
+            component: () => import("pages/reports/Index.vue"),
+          },
+          {
+            path: ":id",
+            name: "reports.show",
+            component: () => import("pages/reports/Show.vue"),
+          },
+          {
+            path: "create",
+            name: "reports.create",
+            component: () => import("pages/reports/Create.vue"),
+          },
+        ],
       },
       {
         path: "schedules",
-        name: "schedules",
+        name: "schedules.index",
         component: () => import("pages/schedules/Index.vue"),
       },
       {
         path: "archives",
-        name: "archives",
+        name: "archives.index",
         component: () => import("pages/archives/Index.vue"),
       },
       {

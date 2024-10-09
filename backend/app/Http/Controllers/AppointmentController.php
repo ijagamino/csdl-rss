@@ -10,17 +10,14 @@ class AppointmentController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
-    }
+        $user = $request->user();
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        $appointments = $user->reportAppointments()->with('report:id,category,title')->get();
+        // $appointments = Appointment::all();
+
+        return $appointments;
     }
 
     /**
@@ -35,14 +32,6 @@ class AppointmentController extends Controller
      * Display the specified resource.
      */
     public function show(Appointment $appointment)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Appointment $appointment)
     {
         //
     }

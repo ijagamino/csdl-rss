@@ -17,11 +17,11 @@
       :active="$page.url === '/dashboard?status=approved'"
     />
   </q-btn-group>
-  <section class="row q-mt-sm q-col-gutter-lg">
+  <section class="row q-col-gutter-lg q-mt-sm">
     <ReportCard
       class="col-12 col-md-6"
       v-for="report in reports"
-      v-bind:key="report.id"
+      :key="report.id"
       :report
     />
   </section>

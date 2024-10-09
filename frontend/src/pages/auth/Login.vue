@@ -1,12 +1,19 @@
 <template>
-  {{ authStore.username }}
   <q-form>
-    <q-input label="Email" filled v-model="form.email" />
     <q-input
-      label="Password"
-      filled
-      :type="showPassword ? 'text' : 'password'"
+      v-model="form.email"
+      label="Email"
+      bottom-slots
+      :error="!!errors.email"
+      :error-message="errors.email?.join(' ')"
+    />
+    <q-input
       v-model="form.password"
+      label="Password"
+      :type="showPassword ? 'text' : 'password'"
+      bottom-slots
+      :error="!!errors.password"
+      :error-message="errors.password?.join(' ')"
     >
       <template #append>
         <q-icon
@@ -22,6 +29,9 @@
 
 <script setup>
 const authStore = useAuthStore();
+const $q = useQuasar();
+
+const errors = ref({});
 
 const form = reactive({
   email: null,

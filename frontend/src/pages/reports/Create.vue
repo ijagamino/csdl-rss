@@ -1,70 +1,98 @@
 <template>
   <PageHeader> Reporting </PageHeader>
   <q-form>
-    <q-select
+    <FormSelect
+      v-model="form.category"
       placeholder="Choose a category"
       label="Choose a category"
-      v-model="form.category"
-      :error="form.errors.category"
       :options="categories"
+      :error="!!errors.category"
+      :errors="errors.category"
     />
-    <q-input
+    <FormInput
+      v-model="form.title"
       label="Title"
       placeholder="Write the title..."
-      v-model="form.title"
-      :error="form.errors.title"
+      :error="!!errors.title"
+      :errors="errors.title"
     />
-    <q-input
-      label="Content"
-      name="content"
-      placeholder="Write the content..."
+    <FormInput
       v-model="form.content"
-      :error="form.errors.content"
+      type="textarea"
+      label="Content"
+      placeholder="Write the content..."
+      :error="!!errors.content"
+      :errors="errors.content"
     />
-
-    <q-date
-      minimal
-      label="Date"
-      v-model="form.date"
-      :error="form.errors.date"
-    />
-    <q-select
-      label="Time"
-      placeholder="Choose a time"
-      v-model="form.time"
-      :options="availableSlots"
-      optionLabel="label"
-      optionValue="label"
-      :error="form.errors.time"
-      optionDisabled="disabled"
-    />
-    <Button label="Submit" @click="submit()" />
+    <div class="row q-col-gutter-lg q-mt-sm">
+      <q-input
+        class="col-12 col-md-6"
+        v-model="form.date"
+        mask="date"
+        hint=""
+        bottom-slots
+        :error="!!errors.date"
+        :error-message="errors.date?.length > 0 ? errors.date?.join(' ') : ''"
+      >
+        <template #append>
+          <q-icon name="event" class="cursor-pointer">
+            <q-popup-proxy
+              cover
+              transition-show="scale"
+              transition-hide="scale"
+            >
+              <q-date
+                v-model="form.date"
+                :navigation-min-year-month="minDate"
+                :navigation-max-year-month="maxDate"
+                :options="dateOptions"
+                minimal
+                label="Date"
+              />
+            </q-popup-proxy>
+          </q-icon>
+        </template>
+      </q-input>
+      <FormSelect
+        class="col-12 col-md-6"
+        v-model="form.time"
+        :loading="isLoadingTakenTimeSlots"
+        label="Time"
+        placeholder="Choose a time"
+        :disable="!availableTimeSlots || isLoadingTakenTimeSlots"
+        :hint="!form.date ? 'Choose a date first' : ''"
+        :options="availableTimeSlots"
+        optionLabel="label"
+        optionValue="label"
+        optionDisabled="disabled"
+        :error="!!errors.time"
+        :errors="errors.time"
+      />
+    </div>
+    <q-btn label="Submit" @click="addReport()" />
   </q-form>
+  <span v-if="isPending">Adding report...</span>
+  <span v-else-if="isError">An error occurred: {{ error.message }}</span>
+  <span v-else-if="isSuccess">Report added!</span>
 </template>
 
 <script setup>
-import { useQuasar } from "quasar";
-
 const $q = useQuasar();
+const { today, tomorrow, oneMonthFromNow, minDate, maxDate } = useDate();
 
-const props = defineProps({
-  timeSlots: Object,
-  formattedSlots: Object,
-  unavailableSlots: Object,
-});
+const { categories } = useCategory();
+const availableTimeSlots = ref();
 
-const date = computed(() => {
-  const dt = new Date(form.date);
-  const year = dt.getFullYear();
-  const month = String(dt.getMonth() + 1).padStart(2, "0"); // Months are zero-indexed
-  const day = String(dt.getDate()).padStart(2, "0");
+const errors = ref({});
 
-  return `${year}-${month}-${day}`; // "2024-10-09"
-});
+const dateOptions = (dateValue) => {
+  const date = new Date(dateValue);
+  const day = date.getDay();
 
-const categories = ["Financial Assistance", "Complaints", "Others"];
+  return date > tomorrow && day !== 0 && day !== 6;
+};
 
-const form = useForm({
+const form = reactive({
   category: null,
   title: null,
   content: null,
@@ -72,55 +100,58 @@ const form = useForm({
   time: null,
 });
 
-const submit = () => {
-  form.post(route("reports.store"), {
-    onSuccess: () => {
-      $q.notify({
-        message: "Report created successfully!",
-        color: "positive",
-      });
-    },
+const {
+  data: timeSlotsData,
+  error: errorTimeSlots,
+  isLoading: isLoadingTimeSlots,
+  isError: isErrorTimeSlots,
+} = useQuery({
+  queryKey: ["time-slots"],
+});
+
+const {
+  data: takenTimeSlotsData,
+  error: errorTakenTimeSlots,
+  isLoading: isLoadingTakenTimeSlots,
+  isError: isErrorTakenTimeSlots,
+  refetch: refetchTakenTimeSlots,
+} = useQuery({
+  queryKey: ["taken-time-slots", form],
+});
+
+const { isPending, isError, error, isSuccess, mutate } = useMutation({
+  mutationFn: (form) => api.post("/reports", form),
+  onError: (err) => {
+    errors.value = err.response.data.errors;
+  },
+  onSuccess: () => {
+    $q.notify({
+      message: "Report created successfully!",
+      color: "positive",
+    });
+  },
+});
+
+function addReport() {
+  mutate({
+    category: form.category,
+    title: form.title,
+    content: form.content,
+    date: form.date,
+    time: form.time,
   });
-};
-
-const disabledSlots = computed(() => {
-  if (!props.unavailableSlots[date.value]) {
-    return;
-  }
-  const result = props.unavailableSlots[date.value].slots.map(
-    (slot) => `${slot.startTime} - ${slot.endTime}`
-  );
-
-  return result;
-});
-
-const availableSlots = computed(() => {
-  return props.timeSlots.map((slot) => ({
-    label: `${slot.startTime} - ${slot.endTime}`,
-    disable: disabledSlots.value?.includes(
-      `${slot.startTime} - ${slot.endTime}`
-    ),
-  }));
-});
-
-const isTaken = (slot) => {
-  const unavailableForDate = props.unavailableSlots.find(
-    (entry) => entry.date === date.value
-  );
-
-  // If there are no unavailable slots for the selected date, return false
-  if (!unavailableForDate) {
-    return false;
-  }
-
-  // Check if the slot is in the unavailable slots for that date
-  return unavailableForDate.slots.includes(slot);
-};
+}
 
 watch(
   () => form.date,
-  () => {
+  async () => {
+    await refetchTakenTimeSlots();
     form.time = null;
+
+    availableTimeSlots.value = timeSlotsData.value.map((slot) => ({
+      label: slot,
+      disable: takenTimeSlotsData.value?.includes(slot),
+    }));
   }
 );
 </script>

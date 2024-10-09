@@ -33,15 +33,7 @@
         <ReportCreateButton v-if="$page.url !== '/reports/create'" />
       </q-page>
     </q-page-container>
-
-    <q-footer bordered class="lt-md bg-dark">
-      <q-btn-group push square spread>
-        <Button icon="dashboard" size="xl" push />
-        <Button icon="schedule" size="xl" push />
-        <Button icon="archive" size="xl" push />
-      </q-btn-group>
-    </q-footer>
-  </q-layout>
+</q-layout>
 </template>
 
 <script setup>

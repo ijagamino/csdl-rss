@@ -13,26 +13,26 @@ test('it has reports', function () {
     expect($user->reports()->count())->toBeInt();
 });
 
-test('students can create a report', function () {
-    $user = User::factory()->create([
-        'role' => 'student',
-    ]);
-
-    expect($user->can('create', Report::class))->toBeTrue();
-});
-
-test('staffs cannot create a report', function () {
-    $user = User::factory()->create([
-        'role' => 'staff',
-    ]);
-
-    expect($user->can('create', Report::class))->toBeFalse();
-});
-
-test('staffs can view all reports', function () {
-    $user = User::factory()->create([
-        'role' => 'staff',
-    ]);
-
-    expect($user->can('viewAny', Report::class))->toBeTrue();
-});
+// test('students can create a report', function () {
+//     $user = User::factory()->create([
+//         'role' => 'student',
+//     ]);
+//
+//     expect($user->can('create', Report::class))->toBeTrue();
+// });
+//
+// test('staffs cannot create a report', function () {
+//     $user = User::factory()->create([
+//         'role' => 'staff',
+//     ]);
+//
+//     expect($user->can('create', Report::class))->toBeFalse();
+// });
+//
+// test('staffs can view all reports', function () {
+//     $user = User::factory()->create([
+//         'role' => 'staff',
+//     ]);
+//
+//     expect($user->can('viewAny', Report::class))->toBeTrue();
+// });

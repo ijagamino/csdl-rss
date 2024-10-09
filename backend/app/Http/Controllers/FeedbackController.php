@@ -2,18 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Contact;
+use App\Models\Feedback;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
 
-class ContactController extends Controller
+class FeedbackController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return Inertia::render('Reports/Index');
+        //
     }
 
     /**
@@ -21,7 +20,7 @@ class ContactController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Contacts/Create');
+        //
     }
 
     /**
@@ -36,23 +35,7 @@ class ContactController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Contact $contact)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Contact $contact)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Contact $contact)
+    public function show(Feedback $feedback)
     {
         //
     }
@@ -60,7 +43,7 @@ class ContactController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Contact $contact)
+    public function destroy(Feedback $feedback)
     {
         //
     }

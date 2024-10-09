@@ -18,7 +18,7 @@ module.exports = configure(function (/* ctx */) {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli-vite/boot-files
-    boot: ["axios"],
+    boot: ["axios", "vue-query"],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#css
     css: ["app.scss"],
@@ -85,11 +85,23 @@ module.exports = configure(function (/* ctx */) {
             ],
             imports: [
               // presets
+              "@vueuse/core",
               "vue",
               "vue-router",
-              "@vueuse/core",
               "pinia",
+              "quasar",
               {
+                "@tanstack/vue-query": [
+                  //
+                  "useQuery",
+                  "useMutation",
+                ],
+                "@vueuse/core": [
+                  // named imports
+                  "useMouse", // import { useMouse } from '@vueuse/core',
+                  // alias
+                  ["useFetch", "useMyFetch"], // import { useFetch as useMyFetch } from '@vueuse/core',
+                ],
                 "pinia-plugin-persistedstate": [
                   ["default", "piniaPluginPersistedstate"],
                 ],
@@ -97,12 +109,6 @@ module.exports = configure(function (/* ctx */) {
                   ["default", "axios"], // import { default as axios } from 'axios',
                 ],
                 "boot/axios": ["api"],
-                "@vueuse/core": [
-                  // named imports
-                  "useMouse", // import { useMouse } from '@vueuse/core',
-                  // alias
-                  ["useFetch", "useMyFetch"], // import { useFetch as useMyFetch } from '@vueuse/core',
-                ],
               },
             ],
             dirs: [
@@ -143,7 +149,13 @@ module.exports = configure(function (/* ctx */) {
       // directives: [],
 
       // Quasar plugins
-      plugins: [],
+      plugins: ["Notify"],
+      config: {
+        notify: {
+          /* look at QuasarConfOptions from the API card */
+        },
+        dark: false,
+      },
     },
 
     // animations: 'all', // --- includes all animations

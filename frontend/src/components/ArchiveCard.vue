@@ -1,38 +1,51 @@
 <template>
-  <Card
-    class="min-w-48 max-w-64 flex aspect-square"
-    v-bind:key="report.id"
-    :pt="{
-      body: 'grow',
-      footer: 'mt-auto flex items-center justify-between',
-    }"
-  >
-    <template #header>
-      <img src="https://placehold.co/400" alt="" />
-    </template>
-    <template #title> {{ report.title }} </template>
-    <template #subtitle> {{ report.category }} </template>
+  <div class="col-12 col-lg-6 col-xl-4">
+    <q-card bordered>
+      <q-img src="https://cdn.quasar.dev/img/parallax2.jpg" />
 
-    <template #content>
-      <p class="line-clamp-3">{{ report.content }}</p>
-    </template>
+      <q-card-section>
+        <div class="text-h5 q-mt-sm q-mb-xs">{{ archive.report.title }}</div>
+        <div class="text-caption text-grey">
+          {{ archive.report.content }}
+        </div>
+      </q-card-section>
 
-    <template #footer>
-      <Button
-        :href="route('archives.show', report)"
-        label="Details"
-        :as="Link"
-      />
-      <Icon
-        class="pi-trash border-2 rounded-full p-2"
-        v-if="report.status === 'completed'"
-      />
-    </template>
-  </Card>
+      <q-card-actions>
+        <q-btn flat color="primary" label="Share" />
+        <q-btn flat color="secondary" label="Book" />
+
+        <q-space />
+
+        <q-btn
+          color="grey"
+          round
+          flat
+          dense
+          :icon="expanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down'"
+          @click="expanded = !expanded"
+        />
+      </q-card-actions>
+
+      <q-slide-transition>
+        <div v-show="expanded">
+          <q-separator />
+          <q-card-section class="text-subtitle2">
+            Processed by: {{ fullName }}
+          </q-card-section>
+        </div>
+      </q-slide-transition>
+    </q-card>
+  </div>
 </template>
 
 <script setup>
-defineProps({
-  report: Object,
+const props = defineProps({
+  archive: Object,
 });
+
+const fullName = computed(() => {
+  return `${props.archive.user.first_name} ${props.archive.user.last_name}`;
+});
+
+const expanded = ref(false);
 </script>

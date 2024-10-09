@@ -2,7 +2,6 @@
   <PageHeader> Archives </PageHeader>
 
   <q-input
-    filled
     placeholder="Search..."
     type="text"
     v-model="search"
@@ -12,18 +11,14 @@
       <Icon name="search" />
     </template>
   </q-input>
-  <section class="mt-6 justify-center flex flex-wrap gap-2">
-    <ArchiveCard v-for="report in reports" :key="report.id" :report />
-    <!-- <ArchiveCard /> -->
-    <!-- <ArchiveCard /> -->
-    <!-- <ArchiveCard /> -->
-    <!-- <ArchiveCard /> -->
+  <section class="row q-col-gutter-lg q-mt-sm">
+    <ArchiveCard v-for="archive in archivesData" :key="archive.id" :archive />
   </section>
 </template>
 
 <script setup>
-defineProps({
-  reports: Object,
+const { data: archivesData } = useQuery({
+  queryKey: ["archives"],
 });
 
 const search = ref(null);

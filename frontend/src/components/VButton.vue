@@ -1,13 +1,11 @@
 <template>
-  <q-btn color="primary" :class="classes" :active v-bind="$attrs" />
+  <q-btn rounded color="primary" :class="classes" :active>
+    <slot />
+  </q-btn>
 </template>
 
 <script setup>
 import { computed } from "vue";
-
-defineOptions({
-  inheritAttrs: false,
-});
 
 const props = defineProps({
   active: Boolean,

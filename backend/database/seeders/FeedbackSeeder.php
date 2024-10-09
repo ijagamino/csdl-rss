@@ -2,16 +2,16 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Feedback;
 use Illuminate\Database\Seeder;
 
-class ContactSeeder extends Seeder
+class FeedbackSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        //
+        Feedback::factory(5)->create();
     }
 }
