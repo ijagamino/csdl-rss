@@ -5,25 +5,25 @@
         <q-img src="https://placehold.co/600x400" alt="" />
       </div>
 
-      <div class="col-12 col-md-6 justify-between">
-        <header class="q-mb-xl">
-          <h1 class="text-uppercase text-h4">
+      <div class="column col-12 col-md-6 justify-between">
+        <header class="text-uppercase">
+          <h1 class="text-h4">
             <span class="block">CSDL</span>
           </h1>
 
-          <h2 class="text-uppercase text-h5">
+          <h2 class="text-h5">
             <span class="block">Report & Support System</span>
           </h2>
-
-          <p class="text-subtitle1">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatem
-            non vel quidem?
-          </p>
         </header>
+
+        <p class="text-subtitle1">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatem
+          non vel quidem?
+        </p>
 
         <div class="row q-col-gutter-lg">
           <div class="col-12 col-md-6">
-            <VButton class="full-width" label="start" color="primary" />
+            <VButton class="full-width" label="start" />
           </div>
 
           <div class="col-12 col-md-6">

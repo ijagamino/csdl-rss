@@ -14,22 +14,22 @@ class AppointmentSeeder extends Seeder
     public function run(): void
     {
         Appointment::factory()->create([
-            'report_id' => Report::factory()->create(['user_id' => '1']),
-            'date' => '2024-10-10',
+            'report_id' => Report::factory()->create(['user_id' => '2']),
+            'date' => '2024-10-23',
             'start_time' => '09:00:00',
             'end_time' => '10:00:00',
         ]);
 
         Appointment::factory()->create([
-            'report_id' => Report::factory()->create(['user_id' => '1']),
-            'date' => '2024-10-10',
+            'report_id' => Report::factory()->create(['user_id' => '2']),
+            'date' => '2024-10-23',
             'start_time' => '10:00:00',
             'end_time' => '11:00:00',
         ]);
 
         Appointment::factory()->create([
-            'report_id' => Report::factory()->create(['user_id' => '1']),
-            'date' => '2024-10-10',
+            'report_id' => Report::factory()->create(['user_id' => '2']),
+            'date' => '2024-10-23',
             'start_time' => '11:00:00',
             'end_time' => '12:00:00',
         ]);

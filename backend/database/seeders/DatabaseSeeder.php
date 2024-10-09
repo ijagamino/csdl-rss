@@ -5,8 +5,6 @@ namespace Database\Seeders;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
 
 class DatabaseSeeder extends Seeder
 {
@@ -21,8 +19,18 @@ class DatabaseSeeder extends Seeder
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
         // ]);
-        $role = Role::create(['name' => 'student']);
-        $permission = Permission::create(['name' => 'create reports']);
+        //
+        $this->call([
+            RoleAndPermissionSeeder::class,
+        ]);
+
+        User::factory()->create([
+            'username' => 'admin',
+            'email' => 'admin@example.com',
+            'password' => 'admin',
+            'first_name' => 'Admin',
+            'last_name' => 'User',
+        ])->assignRole('admin');
 
         User::factory()->create([
             'username' => 'student',
@@ -30,7 +38,7 @@ class DatabaseSeeder extends Seeder
             'password' => 'student',
             'first_name' => 'Student',
             'last_name' => 'User',
-        ]);
+        ])->assignRole('student');
 
         User::factory()->create([
             'username' => 'staff',
@@ -38,8 +46,7 @@ class DatabaseSeeder extends Seeder
             'password' => 'staff',
             'first_name' => 'Staff',
             'last_name' => 'User',
-            'role' => 'staff',
-        ]);
+        ])->assignRole('staff');
 
         User::factory(10)->create();
 
@@ -58,5 +65,6 @@ class DatabaseSeeder extends Seeder
         $this->call([
             FeedbackSeeder::class,
         ]);
+
     }
 }

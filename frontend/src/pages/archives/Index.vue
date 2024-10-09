@@ -1,16 +1,16 @@
 <template>
   <PageHeader> Archives </PageHeader>
 
-  <q-input
+  <FormInput
     placeholder="Search..."
     type="text"
     v-model="search"
     @keyup="searchInput"
   >
     <template #prepend>
-      <Icon name="search" />
+      <VIcon name="search" />
     </template>
-  </q-input>
+  </FormInput>
   <section class="row q-col-gutter-lg q-mt-sm">
     <ArchiveCard v-for="archive in archivesData" :key="archive.id" :archive />
   </section>

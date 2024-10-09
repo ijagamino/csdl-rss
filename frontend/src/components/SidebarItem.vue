@@ -1,10 +1,19 @@
 <template>
-  <q-item clickable v-ripple active-class="bg-teal-1 text-grey-8">
+  <q-item clickable v-ripple active-class="bg-accent text-primary">
     <q-item-section avatar v-if="icon">
-      <q-avatar :icon :color="iconBackground" :text-color="iconColor" />
+      <q-avatar
+        :icon
+        :color="iconBackground"
+        :text-color="iconColor"
+        active-class="bg-accent"
+      />
     </q-item-section>
 
-    <q-item-section>{{ label }}</q-item-section>
+    <q-item-section>
+      <q-item-label>
+        {{ label }}
+      </q-item-label>
+    </q-item-section>
   </q-item>
 </template>
 
@@ -14,11 +23,11 @@ const props = defineProps({
   icon: String,
   iconBackground: {
     type: String,
-    default: "primary",
+    default: "accent",
   },
   iconColor: {
     type: String,
-    default: "white",
+    default: "primary",
   },
 });
 </script>

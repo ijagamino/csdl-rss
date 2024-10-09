@@ -1,5 +1,12 @@
 <template>
-  <q-input v-model="model" bottom-slots hint="" :error-message="errorMessage" />
+  <q-input v-model="model" bottom-slots hint="" :error-message="errorMessage">
+    <template #prepend>
+      <slot name="prepend" />
+    </template>
+    <template #append>
+      <slot name="append" />
+    </template>
+  </q-input>
 </template>
 
 <script setup>

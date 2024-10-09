@@ -5,16 +5,15 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Password;
-use Inertia\Inertia;
 
 class UserController extends Controller
 {
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request)
     {
-        return Inertia::render('Auth/Register');
+
     }
 
     /**

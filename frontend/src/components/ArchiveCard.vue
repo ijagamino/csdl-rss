@@ -1,7 +1,9 @@
 <template>
   <div class="col-12 col-lg-6 col-xl-4">
     <q-card bordered>
-      <q-img src="https://cdn.quasar.dev/img/parallax2.jpg" />
+      <q-responsive :ratio="2 / 1">
+        <q-img src="http://placehold.co/40" />
+      </q-responsive>
 
       <q-card-section>
         <div class="text-h5 q-mt-sm q-mb-xs">{{ archive.report.title }}</div>
@@ -11,9 +13,6 @@
       </q-card-section>
 
       <q-card-actions>
-        <q-btn flat color="primary" label="Share" />
-        <q-btn flat color="secondary" label="Book" />
-
         <q-space />
 
         <q-btn

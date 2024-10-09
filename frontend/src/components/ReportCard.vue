@@ -8,30 +8,32 @@
           <div class="text-caption text-grey">{{ report.content }}</div>
         </q-card-section>
 
-        <q-card-section class="col-4 flex flex-center">
-          <v-icon
+        <q-card-section>
+          <VIcon
             name="check_circle"
             size="xl"
             v-if="report.status === 'approved'"
           />
-          <v-icon name="pending" size="xl" v-if="report.status === 'pending'" />
+          <VIcon name="pending" size="xl" v-if="report.status === 'pending'" />
         </q-card-section>
       </q-card-section>
 
       <q-separator />
 
-      <q-card-actions align="between">
-        <div>
-          <q-btn flat round icon="event" />
-          <q-btn flat :label="schedule" />
-        </div>
-        <!-- <Link to="reports" v-if="!appointment"> -->
-        <q-btn
-          :to="{ name: 'reports.show', params: { id: report.id } }"
-          color="primary"
-          label="Details"
-        />
-        <!-- </Link> -->
+      <q-card-actions class="row" align="between">
+        <q-btn flat round icon="event" />
+        <q-btn flat :label="schedule" />
+        <q-space />
+          <VButton
+            v-if="can.approve && report.status === 'pending'"
+            @click="approveReport()"
+            color="positive"
+            >Approve</VButton
+          >
+          <VButton
+            :to="{ name: 'reports.show', params: { id: report.id } }"
+            label="Details"
+          />
       </q-card-actions>
     </q-card>
   </div>
@@ -40,9 +42,35 @@
 <script setup>
 const props = defineProps({
   report: Object,
-  startTime: Object,
-  endTime: Object,
+  can: Object,
 });
+
+const $q = useQuasar();
+
+const queryClient = useQueryClient();
+
+const { isPending, isError, error, isSuccess, mutate } = useMutation({
+  mutationFn: async () => {
+    const response = await api.patch(`reports/${props.report.id}/approve`, {
+      status: "approved",
+    });
+    console.log(response);
+  },
+  onError: (err) => {
+    errors.value = err.response.data.errors;
+  },
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ["reports"] });
+    $q.notify({
+      message: "Report approved.",
+      color: "positive",
+    });
+  },
+});
+
+function approveReport() {
+  mutate();
+}
 
 const { formatDate, formatTime } = useDate();
 

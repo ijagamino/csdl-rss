@@ -16,19 +16,32 @@ class ReportController extends Controller
     {
         $user = $request->user();
 
-        $reports = $user->can('viewAny', Report::class)
+        $reports = $user->can('view all reports')
             ? Report::query()
                 ->where('status', '!=', 'completed')
                 ->with('appointment:report_id,date,start_time,end_time')
-                ->get()
+                ->when($request->status, fn ($query, $status) => $query->where('status', $status))
+                ->orderBy('status', 'desc')
+                ->paginate(6)
+                ->withQueryString()
             : Report::query()
                 ->whereBelongsTo($user)
                 ->where('status', '!=', 'completed')
-                ->when($request->status, fn ($query, $status) => $query->where('status', $status))
                 ->with('appointment:report_id,date,start_time,end_time')
-                ->get();
+                ->when($request->status, fn ($query, $status) => $query->where('status', $status))
+                ->paginate(6);
 
-        return $reports;
+        return response()->json([
+            'reports' => $reports,
+            'can' => [
+                'viewAll' => $user->can('view all reports'),
+                'viewOwn' => $user->can('view own reports'),
+                'create' => $user->can('create reports'),
+                'edit' => $user->can('edit reports'),
+                'approve' => $user->can('approve reports'),
+            ],
+        ]
+        );
     }
 
     public function store(Request $request)

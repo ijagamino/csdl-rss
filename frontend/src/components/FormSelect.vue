@@ -1,10 +1,5 @@
 <template>
-  <q-select
-    v-model="model"
-    bottom-slots
-    hint=""
-    :error-message="errorMessage"
-  />
+  <q-select v-model="model" bottom-slots :error-message="errorMessage" />
 </template>
 
 <script setup>

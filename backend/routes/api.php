@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\StaffReportController;
 use App\Http\Controllers\TakenTimeSlotController;
 use App\Http\Controllers\TimeSlotController;
 use Illuminate\Http\Request;
@@ -44,4 +45,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/schedules/{report}', 'show')->name('schedules.show');
     });
 
+    Route::controller(StaffReportController::class)->group(function () {
+        Route::get('/reports/{report}/approve', 'update')->name('reports.update.approve');
+        Route::patch('/reports/{report}/approve', 'update')->name('reports.update.approve');
+    });
 });

@@ -1,17 +1,12 @@
 <template>
-  <q-btn rounded color="primary" :class="classes" :active>
+  <q-btn rounded color="accent" :outline="inactive" :active>
     <slot />
   </q-btn>
 </template>
 
 <script setup>
-import { computed } from "vue";
-
 const props = defineProps({
   active: Boolean,
+  inactive: Boolean,
 });
-
-const classes = computed(() => ({
-  "bg-dark": props.active,
-}));
 </script>

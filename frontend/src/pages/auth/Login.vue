@@ -1,19 +1,19 @@
 <template>
   <q-form>
-    <q-input
+    <FormInput
       v-model="form.email"
       label="Email"
       bottom-slots
-      :error="!!errors.email"
-      :error-message="errors.email?.join(' ')"
+      :error="!!authStore.errors.email"
+      :error-message="authStore.errors.email?.join(' ')"
     />
-    <q-input
+    <FormInput
       v-model="form.password"
       label="Password"
       :type="showPassword ? 'text' : 'password'"
       bottom-slots
-      :error="!!errors.password"
-      :error-message="errors.password?.join(' ')"
+      :error="!!authStore.errors.password"
+      :error-message="authStore.errors.password?.join(' ')"
     >
       <template #append>
         <q-icon
@@ -22,7 +22,7 @@
           @click="showPassword = !showPassword"
         />
       </template>
-    </q-input>
+    </FormInput>
     <VButton label="Log In" @click="authStore.login(form)" />
   </q-form>
 </template>
@@ -31,7 +31,7 @@
 const authStore = useAuthStore();
 const $q = useQuasar();
 
-const errors = ref({});
+const errors = ref({})
 
 const form = reactive({
   email: null,

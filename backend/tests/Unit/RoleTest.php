@@ -6,44 +6,54 @@ use App\Models\User;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
-test('it has reports', function () {
-    $user = User::factory()->create();
+describe('role tests', function () {
 
-    $report = Report::factory(3)->create([
-        'user_id' => $user->id,
-    ]);
+    beforeEach(function () {
+        $studentRole = Role::create(['name' => 'student']);
+        $staffRole = Role::create(['name' => 'staff']);
 
-    expect($user->reports()->count())->toBeInt();
-});
+        $createReports = Permission::create(['name' => 'create reports']);
+        $viewOwnReports = Permission::create(['name' => 'view own reports']);
+        $viewAllReports = Permission::create(['name' => 'view all reports']);
 
-test('student role can create reports', function () {
-    $role = Role::create(['name' => 'student']);
-    $permission = Permission::create(['name' => 'create reports']);
+        $studentRole->givePermissionTo($createReports);
+        $studentRole->revokePermissionTo($viewOwnReports);
+        $staffRole->givePermissionTo($viewAllReports);
 
-    $role->givePermissionTo($permission);
-    $user = User::factory()->create([]);
+        $user = User::factory()->create();
 
-    $user->assignRole($role);
+        $this->student = User::factory()->create();
+        $this->staff = User::factory()->create();
 
-    $user2 = User::factory()->create([]);
+        $this->student->assignRole($studentRole);
+        $this->staff->assignRole($staffRole);
+        // $this->staff->givePermissionTo($createReports);
+    });
 
-    dd($user2->getRoleNames());
+    test('it has reports', function () {
+        $report = Report::factory(3)->create([
+            'user_id' => $this->student->id,
+        ]);
 
-    expect($user->can('create reports'))->toBeTrue();
-});
+        expect($this->student->reports()->count())->toBeInt();
+    });
 
-test('staffs cannot create a report', function () {
-    $user = User::factory()->create([
-        'role' => 'staff',
-    ]);
+    test('student role can create reports', function () {
+        expect($this->student->can('create reports'))->toBeTrue();
+    });
 
-    expect($user->can('create', Report::class))->toBeFalse();
-});
+    test('staff role cannot create a report', function () {
 
-test('staffs can view all reports', function () {
-    $user = User::factory()->create([
-        'role' => 'staff',
-    ]);
+        expect($this->staff->can('create reports'))->toBeFalse();
+    });
 
-    expect($user->can('viewAny', Report::class))->toBeTrue();
+    test('staff role can view all reports', function () {
+        expect($this->staff->can('view all reports'))->toBeTrue();
+    });
+
+    test('staffs permissions', function () {
+        // dd($this->staff->getAllPermissions());
+        // dd($this->student->getPermissionsViaRoles());
+        dd($this->studentRole->permissions->pluck('name'));
+    });
 });

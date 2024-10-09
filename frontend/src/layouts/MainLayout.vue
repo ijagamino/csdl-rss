@@ -2,33 +2,29 @@
   <q-layout view="hHh Lpr fFf">
     <q-header bordered elevated>
       <q-toolbar>
-        <q-btn
+        <VButton
           v-if="authStore.user"
           @click="toggleLeftDrawer"
           flat
-          dense
           round
           icon="menu"
           aria-label="Menu"
         />
 
-        <q-toolbar-title>
-          <VButton flat rounded="false" color="white" size="xl">
-            <q-avatar>
+        <q-toolbar-title class="gt-md">
+          <VButton flat :rounded="false">
+            <q-avatar color="">
               <img src="https://placehold.co/40" />
             </q-avatar>
             <span class="q-ml-sm"> RSS </span>
           </VButton>
         </q-toolbar-title>
 
-        <q-btn
-          v-if="!authStore.user"
-          to="/login"
-          color="accent"
-          label="Login"
-        />
+        <q-space />
 
-        <q-btn v-else label="Log Out" @click="authStore.logout()" />
+        <VButton v-if="!authStore.user" to="/login" label="Login" />
+
+        <VButton v-else label="Log Out" @click="authStore.logout()" />
       </q-toolbar>
     </q-header>
 
@@ -43,7 +39,7 @@
         <q-list padding>
           <q-item clickable v-ripple>
             <q-item-section avatar>
-              <q-avatar icon="person" color="primary" text-color="white" />
+              <q-avatar icon="person" color="accent" text-color="white" />
             </q-item-section>
             <q-item-section>
               <q-item-label>{{ fullName }}</q-item-label>
@@ -90,15 +86,22 @@
           <SidebarItem
             :to="{ name: 'contact-us' }"
             label="Contact Us"
-            icon="dashboard"
+            icon="feedback"
+          />
+
+          <q-separator spaced />
+
+          <SidebarItem
+            :label="darkMode.isDark.value ? 'Light Mode' : 'Dark Mode'"
+            :icon="darkMode.isDark.value ? 'light_mode' : 'dark_mode'"
+            @click="darkMode.toggleDarkMode()"
           />
 
           <q-separator spaced />
 
           <q-item clickable v-ripple>
             <q-item-section>
-              <q-btn
-                color="primary"
+              <VButton
                 class="w-full uppercase"
                 @click="authStore.logout()"
                 label="Log Out"
@@ -114,11 +117,10 @@
         <router-view />
 
         <q-page-sticky position="bottom-right" :offset="[18, 18]">
-          <q-btn
+          <VButton
             v-if="authStore.user"
             :to="{ name: 'reports.create' }"
             round
-            color="primary"
             icon="add"
             size="xl"
           />
@@ -130,7 +132,7 @@
       <q-btn-group push square spread>
         <VButton
           :to="{ name: 'reports.index' }"
-          icon="dashboard"
+          icon="description"
           size="xl"
           push
         />
@@ -152,12 +154,11 @@
 </template>
 
 <script setup>
-defineOptions({
-  name: "MainLayout",
-});
-const leftDrawerOpen = ref(false);
-
+const $q = useQuasar();
 const authStore = useAuthStore();
+const darkMode = useDarkMode();
+
+const leftDrawerOpen = ref(false);
 
 const fullName = computed(() => {
   return `${authStore.user.first_name} ${authStore.user.last_name}`;

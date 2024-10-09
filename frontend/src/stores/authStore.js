@@ -23,6 +23,7 @@ export const useAuthStore = defineStore(
       onSuccess: async () => {
         const { data } = await api.get("/user");
 
+        errors.value = {};
         user.value = data;
 
         router.push({ name: "reports.index" });

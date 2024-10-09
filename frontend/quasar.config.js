@@ -92,9 +92,10 @@ module.exports = configure(function (/* ctx */) {
               "quasar",
               {
                 "@tanstack/vue-query": [
-                  //
-                  "useQuery",
+                  "useInfiniteQuery",
                   "useMutation",
+                  "useQuery",
+                  "useQueryClient",
                 ],
                 "@vueuse/core": [
                   // named imports
@@ -154,7 +155,7 @@ module.exports = configure(function (/* ctx */) {
         notify: {
           /* look at QuasarConfOptions from the API card */
         },
-        dark: false,
+        dark: "auto",
       },
     },
 
