@@ -50,6 +50,7 @@ export const useAuthStore = defineStore(
       }
 
       router.push({ name: "welcome" });
+
       user.value = null;
       token.value = "";
     };

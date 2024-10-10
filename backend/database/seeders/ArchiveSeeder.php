@@ -14,9 +14,9 @@ class ArchiveSeeder extends Seeder
      */
     public function run(): void
     {
-        Archive::factory(3)->create([
-            'report_id' => Report::factory()->create(['user_id' => '1', 'status' => 'completed']),
-            'user_id' => User::factory()->create(),
-        ]);
+        // Archive::factory(3)->create([
+        //     'report_id' => Report::factory()->create(['user_id' => '1']),
+        //     'user_id' => User::factory()->create(),
+        // ]);
     }
 }

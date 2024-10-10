@@ -18,30 +18,29 @@ class ReportController extends Controller
 
         $reports = $user->can('view all reports')
             ? Report::query()
-                ->where('status', '!=', 'completed')
-                ->with('appointment:report_id,date,start_time,end_time')
-                ->when($request->status, fn ($query, $status) => $query->where('status', $status))
-                ->orderBy('status', 'desc')
+                ->with('appointment:id,report_id,start_time,end_time,status')
+                ->whereHas('appointment', fn ($query) => $query->where('status', '!=', 'completed'))
+                ->when($request->status, fn ($query, $status) => $query->whereHas('appointment', fn ($query) => $query->where('status', $status)))
+                // ->orderBy('status', 'desc')
                 ->paginate(6)
-                ->withQueryString()
             : Report::query()
                 ->whereBelongsTo($user)
-                ->where('status', '!=', 'completed')
-                ->with('appointment:report_id,date,start_time,end_time')
-                ->when($request->status, fn ($query, $status) => $query->where('status', $status))
+                ->with('appointment:id,report_id,start_time,end_time')
+                ->with('appointment')
+                ->whereHas('appointment', fn ($query) => $query->where('status', '!=', 'completed'))
+                ->when($request->status, fn ($query, $status) => $query->whereHas('appointment', fn ($query) => $query->where('status', $status)))
                 ->paginate(6);
 
         return response()->json([
             'reports' => $reports,
             'can' => [
-                'viewAll' => $user->can('view all reports'),
-                'viewOwn' => $user->can('view own reports'),
-                'create' => $user->can('create reports'),
-                'edit' => $user->can('edit reports'),
-                'approve' => $user->can('approve reports'),
+                'viewAllReports' => $user->can('view all reports'),
+                'viewOwnReports' => $user->can('view own reports'),
+                'createReports' => $user->can('create reports'),
+                'updateReports' => $user->can('update reports'),
+                'updateAppointments' => $user->can('update appointments'),
             ],
-        ]
-        );
+        ]);
     }
 
     public function store(Request $request)

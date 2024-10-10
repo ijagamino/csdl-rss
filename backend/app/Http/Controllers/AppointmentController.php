@@ -41,7 +41,12 @@ class AppointmentController extends Controller
      */
     public function update(Request $request, Appointment $appointment)
     {
-        //
+
+        $appointment->status = $request->status;
+        $appointment->user_id = $request->user()->id;
+        $appointment->save();
+
+        return response()->noContent();
     }
 
     /**

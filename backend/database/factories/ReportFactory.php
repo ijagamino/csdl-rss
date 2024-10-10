@@ -22,7 +22,6 @@ class ReportFactory extends Factory
             'category' => fake()->words(2, true),
             'title' => fake()->words(3, true),
             'content' => fake()->text(),
-            'status' => fake()->randomElement(['pending', 'approved', 'completed']),
         ];
     }
 }

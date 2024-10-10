@@ -6,7 +6,6 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ScheduleController;
-use App\Http\Controllers\StaffReportController;
 use App\Http\Controllers\TakenTimeSlotController;
 use App\Http\Controllers\TimeSlotController;
 use Illuminate\Http\Request;
@@ -21,12 +20,17 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::get('/time-slots', [TimeSlotController::class, 'index'])->name('time-slots.index');
     Route::get('/taken-time-slots', [TakenTimeSlotController::class, 'index'])->name('taken-time-slots.index');
-    Route::get('/appointments', [AppointmentController::class, 'index']);
 
     Route::controller(ReportController::class)->group(function () {
         Route::get('/reports', 'index')->name('reports.index');
         Route::post('/reports', 'store')->name('reports.store');
         Route::get('/reports/{report}', 'show')->name('reports.show')->can('view', 'report');
+    });
+
+    Route::controller(AppointmentController::class)->group(function () {
+        Route::get('/appointments', 'index')->name('appointments.index');
+        Route::get('/appointments/{appointment}', 'show')->name('appointments.show');
+        Route::patch('/appointments/{appointment}', 'update')->name('appointments.update');
     });
 
     Route::controller(ArchiveController::class)->group(function () {
@@ -37,16 +41,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::controller(FeedbackController::class)->group(function () {
         Route::get('/feedbacks', 'index')->name('feedbacks.index');
         Route::post('/feedbacks', 'store')->name('feedbacks.store');
-        Route::get('/feedbacks/{feedbacks}', 'show')->name('feedbacks.show');
+        Route::get('/feedbacks/{feedback}', 'show')->name('feedbacks.show');
     });
 
     Route::controller(ScheduleController::class)->group(function () {
         Route::get('/schedules', 'index')->name('schedules.index');
         Route::get('/schedules/{report}', 'show')->name('schedules.show');
-    });
-
-    Route::controller(StaffReportController::class)->group(function () {
-        Route::get('/reports/{report}/approve', 'update')->name('reports.update.approve');
-        Route::patch('/reports/{report}/approve', 'update')->name('reports.update.approve');
     });
 });

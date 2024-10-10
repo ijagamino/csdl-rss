@@ -8,11 +8,13 @@ import axios from "axios";
 // "export default () => {}" function below (which runs individually
 // for each client)
 
+const baseUrl = "http://localhost:8000";
+
 axios.defaults.withCredentials = true;
 axios.defaults.withXSRFToken = true;
-axios.defaults.baseURL = "http://localhost:8000";
+axios.defaults.baseURL = `${baseUrl}`;
 
-const api = axios.create({ baseURL: "http://localhost:8000/api" });
+const api = axios.create({ baseURL: `${baseUrl}/api` });
 
 export default boot(({ app }) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api

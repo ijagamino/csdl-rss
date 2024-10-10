@@ -79,11 +79,6 @@ const routes = [
         component: () => import("pages/archives/Index.vue"),
       },
       {
-        path: "settings",
-        name: "settings",
-        component: () => import("pages/Settings.vue"),
-      },
-      {
         path: "about",
         name: "about",
         component: () => import("pages/About.vue"),

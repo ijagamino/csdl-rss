@@ -37,6 +37,7 @@ class StaffReportController extends Controller
     public function update(Request $request, Report $report)
     {
         $report->status = $request->status;
+        $report->appointment->user_id = $request->user()->id;
         $report->save();
 
         return response()->noContent();

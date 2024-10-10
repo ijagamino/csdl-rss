@@ -34,6 +34,8 @@ class AppointmentSeeder extends Seeder
             'end_time' => '12:00:00',
         ]);
 
-        Appointment::factory(5)->create();
+        Appointment::factory(5)->create([
+            'status' => fake()->randomElement(['pending', 'approved', 'completed']),
+        ]);
     }
 }

@@ -69,11 +69,6 @@
           <q-item-label header>Miscellaneous</q-item-label>
 
           <SidebarItem
-            :to="{ name: 'settings' }"
-            label="Settings"
-            icon="settings"
-          />
-          <SidebarItem
             :to="{ name: 'about' }"
             label="About"
             icon="priority_high"

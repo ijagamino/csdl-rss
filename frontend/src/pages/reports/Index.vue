@@ -1,5 +1,6 @@
 <template>
   <PageHeader> Reports </PageHeader>
+
   <q-btn-group outline>
     <VButton :inactive="$route.query.status?.length > 0" to="?" label="All" />
     <VButton
@@ -55,10 +56,6 @@ const routeQuery = computed(() => {
   return route.query;
 });
 
-const routeQueryPage = computed(() => {
-  return route.query.page;
-});
-
 const {
   data: reportsData,
   error,
@@ -67,14 +64,6 @@ const {
   isError,
 } = useQuery({
   queryKey: ["reports", routeQuery],
-});
-
-const prevPage = computed(() => {
-  return reportsData.value.reports.prev_page_url;
-});
-//
-const nextPage = computed(() => {
-  return reportsData.value.reports.next_page_url;
 });
 
 const queryStatus = (status) => {
@@ -96,12 +85,10 @@ const queryPage = (page) => {
     },
   };
 };
+
 const routePage = computed(() => {
   return Number(route.query.page) || 1;
 });
 
-const currentPage = ref(routePage); // Tracks the current page
-const perPage = ref(10); // Items per page
-const totalPages = ref(1); // Total number of pages
-const totalItems = ref(0); // Total items from the API
+const currentPage = ref(routePage);
 </script>
