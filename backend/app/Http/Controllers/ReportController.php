@@ -16,20 +16,46 @@ class ReportController extends Controller
     {
         $user = $request->user();
 
+        $today = Carbon::now();
+        $dateToday = Carbon::parse($today)->format('Y-m-d');
+        $timeNow = Carbon::parse($today)->format('H:i:s');
+
         $reports = $user->can('view all reports')
-            ? Report::query()
-                ->with('appointment:id,report_id,start_time,end_time,status')
-                ->whereHas('appointment', fn ($query) => $query->where('status', '!=', 'completed'))
-                ->when($request->status, fn ($query, $status) => $query->whereHas('appointment', fn ($query) => $query->where('status', $status)))
-                // ->orderBy('status', 'desc')
-                ->paginate(6)
-            : Report::query()
-                ->whereBelongsTo($user)
-                ->with('appointment:id,report_id,start_time,end_time')
-                ->with('appointment')
-                ->whereHas('appointment', fn ($query) => $query->where('status', '!=', 'completed'))
-                ->when($request->status, fn ($query, $status) => $query->whereHas('appointment', fn ($query) => $query->where('status', $status)))
-                ->paginate(6);
+        ? Report::query()
+            ->with('appointment', fn ($query) => $query
+                ->latest()
+                ->where('status', '!=', 'cancelled')
+            )
+            ->whereHas('appointment', fn ($query) => $query
+                ->where(fn ($query) => $query
+                    ->where('date', '>', $dateToday)
+                    ->orWhere(fn ($query) => $query
+                        ->where('date', '=', $dateToday)
+                        ->where('start_time', '>=', $timeNow)
+                    ))
+                ->where('status', '!=', 'completed'))
+            ->when($request->status, fn ($query, $status) => $query
+                ->whereHas('appointment', fn ($query) => $query
+                    ->where('status', $status)))
+            ->paginate(6)
+        : Report::query()
+            ->whereBelongsTo($user)
+            ->with('appointment', fn ($query) => $query
+                ->latest()
+                ->where('status', '!=', 'cancelled')
+            )
+            ->whereHas('appointment', fn ($query) => $query
+                ->where(fn ($query) => $query
+                    ->where('date', '>', $dateToday)
+                    ->orWhere(fn ($query) => $query
+                        ->where('date', '=', $dateToday)
+                        ->where('start_time', '>=', $timeNow)
+                    ))
+                ->where('status', '!=', 'completed'))
+            ->when($request->status, fn ($query, $status) => $query
+                ->whereHas('appointment', fn ($query) => $query
+                    ->where('status', $status)))
+            ->paginate(6);
 
         return response()->json([
             'reports' => $reports,
@@ -39,6 +65,8 @@ class ReportController extends Controller
                 'createReports' => $user->can('create reports'),
                 'updateReports' => $user->can('update reports'),
                 'updateAppointments' => $user->can('update appointments'),
+                'approveAppointments' => $user->can('approve appointments'),
+                'cancelAppointments' => $user->can('cancel appointments'),
             ],
         ]);
     }
@@ -81,9 +109,7 @@ class ReportController extends Controller
      */
     public function show(Report $report)
     {
-        $report = $report->load('appointment');
-
-        return $report;
+        return $report->load('appointment');
     }
 
     /**

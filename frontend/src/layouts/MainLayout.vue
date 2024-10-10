@@ -32,6 +32,7 @@
       v-if="authStore.user"
       v-model="leftDrawerOpen"
       bordered
+      elevated
       show-if-above
       @click="!leftDrawerOpen"
     >
@@ -124,26 +125,16 @@
     </q-page-container>
 
     <q-footer bordered class="lt-md bg-dark">
-      <q-btn-group push square spread>
-        <VButton
-          :to="{ name: 'reports.index' }"
-          icon="description"
-          size="xl"
-          push
-        />
-        <VButton
-          :to="{ name: 'schedules.index' }"
-          icon="schedule"
-          size="xl"
-          push
-        />
-        <VButton
-          :to="{ name: 'archives.index' }"
-          icon="archive"
-          size="xl"
-          push
-        />
-      </q-btn-group>
+      <q-tabs
+        active-color="primary"
+        active-bg-color="accent"
+        mobile-arrows
+        align="justify"
+      >
+        <q-route-tab :to="{ name: 'reports.index' }" icon="description" />
+        <q-route-tab :to="{ name: 'schedules.index' }" icon="schedule" />
+        <q-route-tab :to="{ name: 'archives.index' }" icon="archive" />
+      </q-tabs>
     </q-footer>
   </q-layout>
 </template>
@@ -155,11 +146,11 @@ const darkMode = useDarkMode();
 
 const leftDrawerOpen = ref(false);
 
-const fullName = computed(() => {
-  return `${authStore.user.first_name} ${authStore.user.last_name}`;
-});
-
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;
 }
+
+const fullName = computed(() => {
+  return `${authStore.user.first_name} ${authStore.user.last_name}`;
+});
 </script>

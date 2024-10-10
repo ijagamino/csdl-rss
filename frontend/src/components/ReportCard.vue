@@ -1,69 +1,157 @@
 <template>
   <div class="col-12 col-lg-6 col-xl-4 items-center">
-    {{ can.updateAppointments }}
-    {{ report.appointment }}
     <q-card bordered>
       <q-card-section horizontal>
-        <q-card-section class="col q-pt-xs">
-          <div class="text-overline">{{ report.category }}</div>
-          <div class="text-h5 q-mt-sm q-mb-xs">{{ report.title }}</div>
-          <div class="text-caption text-grey">{{ report.content }}</div>
-        </q-card-section>
-
-        <q-card-section>
-          <VIcon
-            name="check_circle"
-            size="xl"
-            v-if="report.appointment.status === 'approved'"
-          />
-          <VIcon
-            name="pending"
-            size="xl"
-            v-if="report.appointment.status === 'pending'"
-          />
+        <q-card-section class="col" horizontal>
+          <q-card-section>
+            <div class="text-h5 q-mt-sm q-mb-xs">{{ report.title }}</div>
+          </q-card-section>
+          <q-space />
+          <q-card-section>
+            <VIcon
+              v-if="report.appointment?.status === 'pending'"
+              name="pending"
+              size="xl"
+            />
+            <VIcon
+              v-if="report.appointment?.status === 'approved'"
+              name="check_circle"
+              size="xl"
+              color="positive"
+            />
+            <VIcon
+              v-if="!report.appointment"
+              name="cancel"
+              size="xl"
+              color="negative"
+            />
+          </q-card-section>
         </q-card-section>
       </q-card-section>
 
       <q-separator />
 
-      <q-card-actions class="row" align="between">
-        <q-btn flat round icon="event" />
-        <q-btn flat :label="schedule" />
+      <q-card-actions>
+        <VButton
+          v-if="report.appointment"
+          icon="event"
+          flat
+          :label="schedule"
+        />
+        <VButton v-else label="Set schedule" icon="event" flat>
+          <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+            <q-date
+              v-model="form.date"
+              :navigation-min-year-month="minDate"
+              :navigation-max-year-month="maxDate"
+              :options="dateOptions"
+              minimal
+              color="accent"
+            >
+              <FormSelect
+                class="col-12 col-md-6"
+                v-model="form.time"
+                :loading="isLoadingTakenTimeSlots"
+                label="Time"
+                placeholder="Choose a time"
+                :disable="!availableTimeSlots || isLoadingTakenTimeSlots"
+                :hint="!form.date ? 'Choose a date first' : ''"
+                :options="availableTimeSlots"
+                optionLabel="label"
+                optionValue="label"
+                optionDisabled="disabled"
+              />
+              <div class="row items-center justify-end q-gutter-sm">
+                <VButton label="Cancel" color="negative" v-close-popup />
+                <VButton label="OK" color="positive" v-close-popup />
+              </div>
+            </q-date>
+          </q-popup-proxy>
+        </VButton>
 
         <q-space />
 
         <VButton
-          v-if="
-            can.updateAppointments && report.appointment.status === 'pending'
-          "
-          @click="approveReport()"
-          color="positive"
-          >Approve</VButton
-        >
-        <VButton
-          :to="{ name: 'reports.show', params: { id: report.id } }"
-          label="Details"
+          round
+          flat
+          dense
+          :icon="expanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down'"
+          @click="expanded = !expanded"
         />
       </q-card-actions>
+
+      <q-slide-transition>
+        <div v-show="expanded">
+          <q-separator />
+          <q-card-section>
+            <div class="text-h5">{{ fullDate }}</div>
+            <div class="text-overline">{{ report.category }}</div>
+            <div class="text-caption">{{ report.content }}</div>
+          </q-card-section>
+          <q-card-actions align="right">
+            <VButton
+              v-if="
+                can?.approveAppointments &&
+                report.appointment?.status === 'pending'
+              "
+              @click="approveAppointment()"
+              color="positive"
+              label="Approve"
+            />
+            <VButton
+              v-if="
+                can?.cancelAppointments &&
+                report.appointment?.status === 'pending'
+              "
+              @click="cancelAppointment()"
+              color="negative"
+              label="cancel"
+            />
+          </q-card-actions>
+        </div>
+      </q-slide-transition>
     </q-card>
   </div>
 </template>
 
 <script setup>
 const props = defineProps({
-  report: Object,
-  can: Object,
+  report: { required: false, type: Object },
+  can: { required: false, type: Object },
 });
 
-const $q = useQuasar();
+const { today, tomorrow, oneMonthFromNow, minDate, maxDate } = useDate();
+const { categories } = useCategory();
 
+const form = reactive({
+  date: null,
+  time: null,
+});
+
+const {
+  dateOptions,
+  availableTimeSlots,
+  isLoadingTimeSlots,
+  isErrorTimeSlots,
+  errorTimeSlots,
+  isLoadingTakenTimeSlots,
+  isErrorTakenTimeSlots,
+  errorTakenTimeSlots,
+} = useDatePicker(form);
+
+const $q = useQuasar();
 const queryClient = useQueryClient();
+
+const expanded = ref(false);
 
 const { isPending, isError, error, isSuccess, mutate } = useMutation({
   mutationFn: async () => {
-    const response = await api.patch(`appointments/${props.report.id}`, {
-      status: "approved",
-    });
+    const response = await api.patch(
+      `appointments/${props.report.appointment?.id}`,
+      {
+        status: "approved",
+      }
+    );
   },
   onError: (err) => {
     errors.value = err.response.data.errors;
@@ -71,14 +159,51 @@ const { isPending, isError, error, isSuccess, mutate } = useMutation({
   onSuccess: () => {
     queryClient.invalidateQueries({ queryKey: ["reports"] });
     $q.notify({
-      message: "Report approved.",
+      message: "Appointment approved.",
       color: "positive",
     });
   },
 });
 
-function approveReport() {
+const {
+  isPending: isPendingCancel,
+  isError: isErrorCancel,
+  error: errorCancel,
+  isSuccess: isSuccessCancel,
+  mutate: mutateCancel,
+} = useMutation({
+  mutationFn: async () => {
+    const response = await api.patch(
+      `appointments/${props.report.appointment?.id}`,
+      {
+        status: "cancelled",
+      }
+    );
+  },
+  onError: (err) => {
+    errors.value = err.response.data.errors;
+  },
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ["reports"] });
+    $q.notify({
+      message: "Appointment cancelled.",
+      color: "negative",
+    });
+  },
+});
+
+const edit = reactive({
+  category: props.report.category,
+  title: props.report.title,
+  content: props.report.content,
+});
+
+function approveAppointment() {
   mutate();
+}
+
+function cancelAppointment() {
+  mutateCancel();
 }
 
 const { formatDate, formatTime } = useDate();
@@ -90,5 +215,16 @@ const schedule = computed(() => {
   return `${formatTime(props.report.appointment?.start_time)} - ${formatTime(
     props.report.appointment?.end_time
   )}`;
+});
+
+const date = computed(() => {
+  return formatDate(props.report.appointment?.date);
+});
+
+const fullDate = computed(() => {
+  if (!props.report.appointment) {
+    return;
+  }
+  return `${date.value.month} ${date.value.day}, ${date.value.year}`;
 });
 </script>

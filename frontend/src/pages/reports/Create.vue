@@ -52,6 +52,7 @@
                     :options="dateOptions"
                     minimal
                     label="Date"
+                    color="accent"
                   />
                 </q-popup-proxy>
               </VIcon>
@@ -85,7 +86,6 @@
 <script setup>
 const $q = useQuasar();
 const { today, tomorrow, oneMonthFromNow, minDate, maxDate } = useDate();
-
 const { categories } = useCategory();
 const availableTimeSlots = ref();
 

@@ -24,6 +24,8 @@ class RoleAndPermissionSeeder extends Seeder
         Permission::firstOrCreate(['name' => 'delete reports']);
 
         Permission::firstOrCreate(['name' => 'update appointments']);
+        Permission::firstOrCreate(['name' => 'approve appointments']);
+        Permission::firstOrCreate(['name' => 'cancel appointments']);
 
         $adminRole = Role::firstOrCreate(['name' => 'admin']);
         $staffRole = Role::firstOrCreate(['name' => 'staff']);
@@ -37,13 +39,16 @@ class RoleAndPermissionSeeder extends Seeder
 
         $staffRole->givePermissionTo([
             'view all reports',
-:           'update appointments',
+            'approve appointments',
         ]);
 
         $studentRole->givePermissionTo([
             'view own reports',
             'create reports',
             'update reports',
+            'delete reports',
+            'update appointments',
+            'cancel appointments',
         ]);
     }
 }

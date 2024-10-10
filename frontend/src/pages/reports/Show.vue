@@ -2,7 +2,7 @@
   <div v-if="isLoading">Loading...</div>
   <div v-else-if="isError">Error: {{ error.message }}</div>
   <div v-else class="row">
-    <ReportCard :report="reportData" />
+    <ReportCardExpanded :report="reportData" />
   </div>
 </template>
 

@@ -1,7 +1,7 @@
 <template>
   <PageHeader> Reports </PageHeader>
 
-  <q-btn-group outline>
+  <q-btn-group class="q-mb-sm" outline>
     <VButton :inactive="$route.query.status?.length > 0" to="?" label="All" />
     <VButton
       :inactive="$route.query.status !== 'pending'"
@@ -14,28 +14,23 @@
       label="Approved"
     />
   </q-btn-group>
-  <div v-if="isLoading">
-    <q-spinner size="xl" color="primary" />
-    <p>Loading reports...</p>
-  </div>
-  <span v-if="isLoading">Loading...</span>
+
+  <section v-if="isLoading">
+    <q-banner>
+      <q-spinner size="xl" color="accent" />
+      <p>Loading reports...</p>
+    </q-banner>
+  </section>
+
   <section v-else-if="isError">
     <q-banner type="negative">
       <q-icon name="error" />
       Error loading reports: {{ error.message }}
     </q-banner>
   </section>
+
   <section v-else>
-    <q-pagination
-      class="q-mt-md"
-      v-model="currentPage"
-      :max="reportsData.reports.last_page"
-      :max-pages="6"
-      outline
-      color="accent"
-      direction-links
-      :to-fn="queryPage"
-    />
+    <VPagination v-model="currentPage" :max="reportsData.reports.last_page" />
     <div class="row q-col-gutter-lg q-mt-sm">
       <ReportCard
         v-for="report in reportsData.reports.data"
@@ -48,7 +43,6 @@
 </template>
 
 <script setup>
-const router = useRouter();
 const route = useRoute();
 
 // needed in order to trigger a refetch when urlchanges
@@ -72,16 +66,6 @@ const queryStatus = (status) => {
     query: {
       ...route.query,
       status,
-    },
-  };
-};
-
-const queryPage = (page) => {
-  return {
-    path: route.path,
-    query: {
-      ...route.query,
-      page,
     },
   };
 };

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Appointment;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class AppointmentController extends Controller
@@ -13,11 +14,44 @@ class AppointmentController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
+        $today = Carbon::now();
+        $dateToday = Carbon::parse($today)->format('Y-m-d');
+        $timeNow = Carbon::parse($today)->format('H:i:s');
 
-        $appointments = $user->reportAppointments()->with('report:id,category,title')->get();
-        // $appointments = Appointment::all();
+        $appointments = $user->can('view all reports')
+        ? Appointment::query()
+            ->where(fn ($query) => $query
+                ->where('date', '>', $dateToday)
+                ->orWhere(fn ($query) => $query
+                    ->where('date', '=', $dateToday)
+                    ->where('start_time', '>=', $timeNow)
+                )
+            )
+            ->where('status', 'approved')
+            ->paginate(6)
+        : $user->reportAppointments()
+            ->where(fn ($query) => $query
+                ->where('date', '>', $dateToday)
+                ->orWhere(fn ($query) => $query
+                    ->where('date', '=', $dateToday)
+                    ->where('start_time', '>=', $timeNow)
+                )
+            )
+            // ->whereBelongsTo($user)
+            // ->where(fn ($query) => $query
+            //     ->where('date', '>', $dateToday)
+            //     ->orWhere(fn ($query) => $query
+            //         ->where('date', '=', $dateToday)
+            //         ->where('start_time', '>=', $timeNow)
+            //     )
+            // )
+            ->paginate(6);
 
-        return $appointments;
+        // $appointments = $user->reportAppointments()->with('report:id,category,title')->get();
+
+        return response()->json([
+            'appointments' => $appointments,
+        ]);
     }
 
     /**
@@ -43,7 +77,6 @@ class AppointmentController extends Controller
     {
 
         $appointment->status = $request->status;
-        $appointment->user_id = $request->user()->id;
         $appointment->save();
 
         return response()->noContent();
