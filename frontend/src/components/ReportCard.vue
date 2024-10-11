@@ -63,7 +63,12 @@
               />
               <div class="row items-center justify-end q-gutter-sm">
                 <VButton label="Cancel" color="negative" v-close-popup />
-                <VButton label="OK" color="positive" v-close-popup />
+                <VButton
+                  @click="add()"
+                  label="OK"
+                  color="positive"
+                  v-close-popup
+                />
               </div>
             </q-date>
           </q-popup-proxy>
@@ -120,12 +125,23 @@ const props = defineProps({
   can: { required: false, type: Object },
 });
 
-const { today, tomorrow, oneMonthFromNow, minDate, maxDate } = useDate();
-const { categories } = useCategory();
+const $q = useQuasar();
+const queryClient = useQueryClient();
+
+const {
+  today,
+  tomorrow,
+  oneMonthFromNow,
+  minDate,
+  maxDate,
+  formatDate,
+  formatTime,
+} = useDate();
 
 const form = reactive({
   date: null,
   time: null,
+  report_id: props.report.id,
 });
 
 const {
@@ -137,13 +153,12 @@ const {
   isLoadingTakenTimeSlots,
   isErrorTakenTimeSlots,
   errorTakenTimeSlots,
-} = useDatePicker(form);
-
-const $q = useQuasar();
-const queryClient = useQueryClient();
+  add,
+} = useDatePicker("appointments", form);
 
 const expanded = ref(false);
 
+// changes appointment status to "approved"
 const { isPending, isError, error, isSuccess, mutate } = useMutation({
   mutationFn: async () => {
     const response = await api.patch(
@@ -165,6 +180,7 @@ const { isPending, isError, error, isSuccess, mutate } = useMutation({
   },
 });
 
+// changes appointment status to "cancelled"
 const {
   isPending: isPendingCancel,
   isError: isErrorCancel,
@@ -192,12 +208,6 @@ const {
   },
 });
 
-const edit = reactive({
-  category: props.report.category,
-  title: props.report.title,
-  content: props.report.content,
-});
-
 function approveAppointment() {
   mutate();
 }
@@ -205,8 +215,6 @@ function approveAppointment() {
 function cancelAppointment() {
   mutateCancel();
 }
-
-const { formatDate, formatTime } = useDate();
 
 const schedule = computed(() => {
   if (!props.report.appointment) {

@@ -15,7 +15,10 @@ class TakenTimeSlotController extends Controller
     {
 
         $date = $request->input('date');
-        $appointments = Appointment::whereDate('date', $date)->get();
+        $appointments = Appointment::query()
+            ->whereDate('date', $date)
+            ->whereNotIn('status', ['cancelled', 'completed'])
+            ->get();
 
         $takenTimeSlots = [];
 

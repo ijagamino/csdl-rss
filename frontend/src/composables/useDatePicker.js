@@ -1,6 +1,8 @@
-export function useDatePicker(form) {
-  const { today, tomorrow, oneMonthFromNow, minDate, maxDate } = useDate();
+export function useDatePicker(url, form) {
+  const $q = useQuasar();
+  const queryClient = useQueryClient();
 
+  const { tomorrow } = useDate();
   const availableTimeSlots = ref([]);
   const errors = ref({});
 
@@ -30,6 +32,33 @@ export function useDatePicker(form) {
     queryKey: ["taken-time-slots", form],
   });
 
+  const { isPending, isError, error, isSuccess, mutate } = useMutation({
+    mutationFn: (form) => api.post(url, form),
+    onError: (err) => {
+      errors.value = err.response.data.errors;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["reports"] });
+      router.push({ name: "reports.index" });
+
+      $q.notify({
+        message: "Request successful!",
+        color: "positive",
+      });
+    },
+  });
+
+  function add() {
+    mutate({
+      category: form.category,
+      title: form.title,
+      content: form.content,
+      date: form.date,
+      time: form.time,
+      report_id: form.report_id,
+    });
+  }
+
   watch(
     () => form.date,
     async () => {
@@ -52,5 +81,6 @@ export function useDatePicker(form) {
     isLoadingTakenTimeSlots,
     isErrorTakenTimeSlots,
     errorTakenTimeSlots,
+    add,
   };
 }

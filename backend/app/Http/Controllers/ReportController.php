@@ -24,16 +24,14 @@ class ReportController extends Controller
         ? Report::query()
             ->with('appointment', fn ($query) => $query
                 ->latest()
-                ->where('status', '!=', 'cancelled')
-            )
+                ->where('status', '!=', 'cancelled'))
             ->whereHas('appointment', fn ($query) => $query
                 ->where(fn ($query) => $query
                     ->where('date', '>', $dateToday)
                     ->orWhere(fn ($query) => $query
                         ->where('date', '=', $dateToday)
-                        ->where('start_time', '>=', $timeNow)
-                    ))
-                ->where('status', '!=', 'completed'))
+                        ->where('start_time', '>=', $timeNow)))
+                ->whereNotIn('status', ['completed', 'cancelled']))
             ->when($request->status, fn ($query, $status) => $query
                 ->whereHas('appointment', fn ($query) => $query
                     ->where('status', $status)))
@@ -42,8 +40,7 @@ class ReportController extends Controller
             ->whereBelongsTo($user)
             ->with('appointment', fn ($query) => $query
                 ->latest()
-                ->where('status', '!=', 'cancelled')
-            )
+                ->where('status', '!=', 'cancelled'))
             ->whereHas('appointment', fn ($query) => $query
                 ->where(fn ($query) => $query
                     ->where('date', '>', $dateToday)
@@ -102,6 +99,8 @@ class ReportController extends Controller
             'end_time' => $formattedEndTime,
             'report_id' => $report->id,
         ]);
+
+        return response()->noContent();
     }
 
     /**
