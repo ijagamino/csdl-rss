@@ -46,6 +46,9 @@ export const useAuthStore = defineStore(
       try {
         await axios.post("/logout");
       } catch (error) {
+        router.push({ name: "welcome" });
+        user.value = null;
+        token.value = "";
         return Promise.reject(err.response.data.errors);
       }
 

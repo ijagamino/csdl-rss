@@ -20,7 +20,7 @@
               color="positive"
             />
             <VIcon
-              v-if="!report.appointment"
+              v-if="report.appointment?.status === 'cancelled'"
               name="cancel"
               size="xl"
               color="negative"
@@ -33,7 +33,10 @@
 
       <q-card-actions>
         <VButton
-          v-if="report.appointment"
+          v-if="
+            report.appointment.status === 'pending' ||
+            report.appointment.status === 'approved'
+          "
           icon="event"
           flat
           :label="schedule"
@@ -141,7 +144,6 @@ const {
 const form = reactive({
   date: null,
   time: null,
-  report_id: props.report.id,
 });
 
 const {

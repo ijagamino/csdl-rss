@@ -44,9 +44,17 @@ class AppointmentController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Display the specified resource.
      */
-    public function store(Request $request)
+    public function show(Appointment $appointment)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, Appointment $appointment)
     {
         $attributes = $request->validate([
             'date' => ['required'],
@@ -70,21 +78,6 @@ class AppointmentController extends Controller
         ]);
 
         return response()->noContent();
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Appointment $appointment)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Appointment $appointment)
-    {
 
         $appointment->status = $request->status;
         $appointment->save();

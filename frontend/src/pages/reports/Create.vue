@@ -107,6 +107,10 @@ const {
   isLoadingTakenTimeSlots,
   isErrorTakenTimeSlots,
   errorTakenTimeSlots,
+  isPending,
+  isError,
+  isSuccess,
+  error,
   add,
 } = useDatePicker("reports", form);
 </script>

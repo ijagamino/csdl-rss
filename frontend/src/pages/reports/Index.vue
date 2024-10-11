@@ -13,6 +13,11 @@
       :to="queryStatus('approved')"
       label="Approved"
     />
+    <VButton
+      :inactive="$route.query.status !== 'cancelled'"
+      :to="queryStatus('cancelled')"
+      label="Cancelled"
+    />
   </q-btn-group>
 
   <section v-if="isLoading">
@@ -24,7 +29,7 @@
 
   <section v-else-if="isError">
     <q-banner type="negative">
-      <q-icon name="error" />
+      <VIcon name="error" />
       Error loading reports: {{ error.message }}
     </q-banner>
   </section>

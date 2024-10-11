@@ -1,6 +1,7 @@
 export function useDatePicker(url, form) {
   const $q = useQuasar();
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   const { tomorrow } = useDate();
   const availableTimeSlots = ref([]);
@@ -81,6 +82,10 @@ export function useDatePicker(url, form) {
     isLoadingTakenTimeSlots,
     isErrorTakenTimeSlots,
     errorTakenTimeSlots,
+    isPending,
+    isError,
+    isSuccess,
+    error,
     add,
   };
 }
