@@ -39,30 +39,22 @@ class ReportController extends Controller
         : Report::query()
             ->whereBelongsTo($user)
             ->with('appointment')
-            // ->whereHas('appointment', fn ($query) => $query
-            //     ->where(fn ($query) => $query
-            //         ->where('date', '>', $dateToday)
-            //         ->orWhere(fn ($query) => $query
-            //             ->where('date', '=', $dateToday)
-            //             ->where('start_time', '>=', $timeNow)
-            //         ))
-            //     ->where('status', '!=', 'completed'))
-            // ->when($request->status, fn ($query, $status) => $query
-            //     ->whereHas('appointment', fn ($query) => $query
-            //         ->where('status', $status)))
+            ->whereHas('appointment', fn ($query) => $query
+                ->where('status', '!=', 'completed')
+                ->orWhere(fn ($query) => $query
+                    ->whereIn('status', ['approved', 'pending'])
+                    ->where('date', '>', $dateToday)
+                    ->orWhere(fn ($query) => $query
+                        ->where('date', '=', $dateToday)
+                        ->where('start_time', '>=', $timeNow)
+                    )))
+            ->when($request->status, fn ($query, $status) => $query
+                ->whereHas('appointment', fn ($query) => $query
+                    ->where('status', $status)))
             ->paginate(6);
 
         return response()->json([
             'reports' => $reports,
-            'can' => [
-                'viewAllReports' => $user->can('view all reports'),
-                'viewOwnReports' => $user->can('view own reports'),
-                'createReports' => $user->can('create reports'),
-                'updateReports' => $user->can('update reports'),
-                'updateAppointments' => $user->can('update appointments'),
-                'approveAppointments' => $user->can('approve appointments'),
-                'cancelAppointments' => $user->can('cancel appointments'),
-            ],
         ]);
     }
 
@@ -122,6 +114,8 @@ class ReportController extends Controller
      */
     public function destroy(Report $report)
     {
-        //
+        $report->delete();
+
+        return response()->noContent();
     }
 }

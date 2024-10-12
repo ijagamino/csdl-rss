@@ -8,7 +8,7 @@ import axios from "axios";
 // "export default () => {}" function below (which runs individually
 // for each client)
 
-const baseUrl = "http://localhost:8000";
+const baseUrl = "http://192.168.211.95:8000";
 
 axios.defaults.withCredentials = true;
 axios.defaults.withXSRFToken = true;

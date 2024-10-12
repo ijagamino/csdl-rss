@@ -15,16 +15,21 @@
     </q-banner>
   </section>
   <section v-else>
-    <VPagination
-      v-model="currentPage"
-      :max="appointmentsData?.appointments.last_page"
-    />
-    <div class="row q-col-gutter-lg q-mt-sm">
-      <AppointmentCard
-        v-for="appointment in appointmentsData.appointments.data"
-        :key="appointment.id"
-        :appointment
+    <div v-if="!appointmentsData.appointments">
+      No upcoming approved appointments
+    </div>
+    <div>
+      <VPagination
+        v-model="currentPage"
+        :max="appointmentsData.appointments.last_page"
       />
+      <div class="row q-col-gutter-lg q-mt-sm">
+        <AppointmentCard
+          v-for="appointment in appointmentsData.appointments.data"
+          :key="appointment.id"
+          :appointment
+        />
+      </div>
     </div>
   </section>
 </template>
@@ -32,6 +37,7 @@
 <script setup>
 const { categories } = useCategory();
 const route = useRoute();
+const authStore = useAuthStore();
 
 const routeQuery = computed(() => {
   return route.query;

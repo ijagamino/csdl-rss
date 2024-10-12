@@ -1,4 +1,4 @@
-export function useDatePicker(url, form) {
+export function useDatePicker(url, form, urlId = null) {
   const $q = useQuasar();
   const queryClient = useQueryClient();
   const router = useRouter();
@@ -60,6 +60,41 @@ export function useDatePicker(url, form) {
     });
   }
 
+  const {
+    isPending: isPendingUpdate,
+    isError: isErrorUpdate,
+    error: errorUpdate,
+    isSuccess: isSuccessUpdate,
+    mutate: mutateUpdate,
+  } = useMutation({
+    mutationFn: (form) => api.patch(urlId, form),
+    onError: (err) => {
+      errors.value = err.response.data.errors;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["reports"] });
+      router.push({ name: "reports.index" });
+
+      $q.notify({
+        message: "Request successful!",
+        color: "positive",
+      });
+    },
+  });
+
+  function update() {
+    mutateUpdate(form);
+    // mutateUpdate({
+    //   category: form.category,
+    //   title: form.title,
+    //   content: form.content,
+    //   date: form.date,
+    //   time: form.time,
+    //   report_id: form.report_id,
+    //   status: form.status,
+    // });
+  }
+
   watch(
     () => form.date,
     async () => {
@@ -87,5 +122,6 @@ export function useDatePicker(url, form) {
     isSuccess,
     error,
     add,
+    update,
   };
 }

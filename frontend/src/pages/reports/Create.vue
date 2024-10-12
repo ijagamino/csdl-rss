@@ -91,9 +91,6 @@ const { categories } = useCategory();
 const errors = ref({});
 
 const form = reactive({
-  category: null,
-  title: null,
-  content: null,
   date: null,
   time: null,
 });
@@ -112,5 +109,6 @@ const {
   isSuccess,
   error,
   add,
+  update,
 } = useDatePicker("reports", form);
 </script>

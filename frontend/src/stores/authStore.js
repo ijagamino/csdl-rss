@@ -2,6 +2,7 @@ export const useAuthStore = defineStore(
   "auth",
   () => {
     const user = ref(null);
+    const can = ref(null);
     const token = ref(localStorage.getItem("token") || "");
 
     const errors = ref({});
@@ -24,7 +25,11 @@ export const useAuthStore = defineStore(
         const { data } = await api.get("/user");
 
         errors.value = {};
-        user.value = data;
+        user.value = data.user;
+        can.value = data.can;
+
+        console.log(can.value);
+        console.log(data.can);
 
         router.push({ name: "reports.index" });
 
@@ -55,10 +60,11 @@ export const useAuthStore = defineStore(
       router.push({ name: "welcome" });
 
       user.value = null;
+      can.value = null;
       token.value = "";
     };
 
-    return { user, token, errors, login, logout };
+    return { user, can, token, errors, login, logout };
   },
   {
     persist: true,

@@ -56,30 +56,36 @@ class AppointmentController extends Controller
      */
     public function update(Request $request, Appointment $appointment)
     {
-        $attributes = $request->validate([
-            'date' => ['required'],
-            'time' => ['required'],
-            'report_id' => ['required'],
-        ]);
+        if (isset($request->time)) {
 
-        $time = $attributes['time']['label'];
+            $attributes = $request->validate([
+                'date' => [],
+                'time' => [],
+            ]);
+            $time = $attributes['time']['label'];
 
-        [$startTime, $endTime] = explode(' - ', $time);
+            [$startTime, $endTime] = explode(' - ', $time);
 
-        $format = 'H:i';
-        $formattedStartTime = Carbon::parse($startTime)->format($format);
-        $formattedEndTime = Carbon::parse($endTime)->format($format);
+            $format = 'H:i';
+            $formattedStartTime = Carbon::parse($startTime)->format($format);
+            $formattedEndTime = Carbon::parse($endTime)->format($format);
 
-        Appointment::create([
-            'date' => $attributes['date'],
-            'start_time' => $formattedStartTime,
-            'end_time' => $formattedEndTime,
-            'report_id' => $attributes['report_id'],
-        ]);
+            $appointment->date = $request->date;
+            $appointment->start_time = $formattedStartTime;
+            $appointment->end_time = $formattedEndTime;
+        }
 
-        return response()->noContent();
+        if ($request->status === 'approved') {
+            $appointment->status = $request->status;
+        }
 
-        $appointment->status = $request->status;
+        if ($request->status === 'cancelled') {
+            $appointment->date = null;
+            $appointment->start_time = null;
+            $appointment->end_time = null;
+            $appointment->status = $request->status;
+        }
+
         $appointment->save();
 
         return response()->noContent();

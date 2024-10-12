@@ -4,20 +4,31 @@ use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\ArchiveController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FeedbackController;
-use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\TakenTimeSlotController;
 use App\Http\Controllers\TimeSlotController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/user', function (Request $request) {
-        return $request->user();
-    });
+        $user = $request->user();
 
-    Route::get('/permissions', PermissionController::class)->name('permissions.index');
+        $permissions = $user->getAllPermissions()
+            ->pluck('name')
+            ->mapWithKeys(function ($permission) {
+                $camelCasePermission = Str::camel($permission);
+
+                return [$camelCasePermission => true];
+            });
+
+        return response()->json([
+            'user' => $user,
+            'can' => $permissions,
+        ]);
+    });
 
     Route::get('/dashboard', DashboardController::class)->name('dashboard.index');
 
@@ -28,11 +39,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/reports', 'index')->name('reports.index');
         Route::post('/reports', 'store')->name('reports.store');
         Route::get('/reports/{report}', 'show')->name('reports.show')->can('view', 'report');
+        Route::delete('/reports/{report}', 'destroy')->name('reports.destroy')->can('view', 'report');
     });
 
     Route::controller(AppointmentController::class)->group(function () {
         Route::get('/appointments', 'index')->name('appointments.index');
-        Route::post('/appointments', 'store')->name('appointments.store');
         Route::get('/appointments/{appointment}', 'show')->name('appointments.show');
         Route::patch('/appointments/{appointment}', 'update')->name('appointments.update');
     });

@@ -10,18 +10,18 @@
           <q-card-section>
             <VIcon
               v-if="report.appointment?.status === 'pending'"
-              name="pending"
+              name="hourglass_top"
               size="xl"
             />
             <VIcon
               v-if="report.appointment?.status === 'approved'"
-              name="check_circle"
+              name="check"
               size="xl"
               color="positive"
             />
             <VIcon
               v-if="report.appointment?.status === 'cancelled'"
-              name="cancel"
+              name="block"
               size="xl"
               color="negative"
             />
@@ -33,15 +33,11 @@
 
       <q-card-actions>
         <VButton
-          v-if="
-            report.appointment.status === 'pending' ||
-            report.appointment.status === 'approved'
-          "
+          v-if="report.appointment.status === 'cancelled'"
+          label="Set schedule"
           icon="event"
           flat
-          :label="schedule"
-        />
-        <VButton v-else label="Set schedule" icon="event" flat>
+        >
           <q-popup-proxy cover transition-show="scale" transition-hide="scale">
             <q-date
               v-model="form.date"
@@ -67,7 +63,7 @@
               <div class="row items-center justify-end q-gutter-sm">
                 <VButton label="Cancel" color="negative" v-close-popup />
                 <VButton
-                  @click="add()"
+                  @click="update()"
                   label="OK"
                   color="positive"
                   v-close-popup
@@ -76,6 +72,7 @@
             </q-date>
           </q-popup-proxy>
         </VButton>
+        <VButton v-else color="positive" icon="event" flat :label="schedule" />
 
         <q-space />
 
@@ -92,14 +89,20 @@
         <div v-show="expanded">
           <q-separator />
           <q-card-section>
-            <div class="text-h5">{{ fullDate }}</div>
+            <div class="text-h5">
+              {{
+                report.appointment.status === "cancelled"
+                  ? "No schedule set"
+                  : fullDate
+              }}
+            </div>
             <div class="text-overline">{{ report.category }}</div>
             <div class="text-caption">{{ report.content }}</div>
           </q-card-section>
           <q-card-actions align="right">
             <VButton
               v-if="
-                can?.approveAppointments &&
+                authStore.can?.approveAppointments &&
                 report.appointment?.status === 'pending'
               "
               @click="approveAppointment()"
@@ -108,12 +111,21 @@
             />
             <VButton
               v-if="
-                can?.cancelAppointments &&
+                authStore.can?.cancelAppointments &&
                 report.appointment?.status === 'pending'
               "
               @click="cancelAppointment()"
               color="negative"
               label="cancel"
+            />
+            <VButton
+              v-if="
+                authStore.can?.deleteReports &&
+                report.appointment?.status === 'cancelled'
+              "
+              @click="cancelAppointment()"
+              color="negative"
+              label="Delete"
             />
           </q-card-actions>
         </div>
@@ -125,10 +137,10 @@
 <script setup>
 const props = defineProps({
   report: { required: false, type: Object },
-  can: { required: false, type: Object },
 });
 
 const $q = useQuasar();
+const authStore = useAuthStore();
 const queryClient = useQueryClient();
 
 const {
@@ -144,6 +156,7 @@ const {
 const form = reactive({
   date: null,
   time: null,
+  status: "pending",
 });
 
 const {
@@ -156,7 +169,12 @@ const {
   isErrorTakenTimeSlots,
   errorTakenTimeSlots,
   add,
-} = useDatePicker("appointments", form);
+  update,
+} = useDatePicker(
+  "appointments",
+  form,
+  `appointments/${props.report.appointment.id}`
+);
 
 const expanded = ref(false);
 
@@ -218,8 +236,42 @@ function cancelAppointment() {
   mutateCancel();
 }
 
+const {
+  isPending: isPendingDelete,
+  isError: isErrorDelete,
+  error: errorDelete,
+  isSuccess: isSuccessDelete,
+  mutate: mutateDelete,
+} = useMutation({
+  mutationFn: async () => {
+    const response = await api.delete(
+      `reports/${props.report.appointment?.id}`
+    );
+  },
+  onError: (err) => {
+    errors.value = err.response.data.errors;
+  },
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ["reports"] });
+    $q.notify({
+      message: "Report deleted.",
+      color: "negative",
+    });
+  },
+});
+
+function deleteReport() {
+  mutateDelete();
+}
+
 const schedule = computed(() => {
   if (!props.report.appointment) {
+    return;
+  }
+  if (
+    !props.report.appointment.start_time ||
+    !props.report.appointment.end_time
+  ) {
     return;
   }
   return `${formatTime(props.report.appointment?.start_time)} - ${formatTime(

@@ -1,6 +1,6 @@
 <template>
-  <q-item clickable v-ripple active-class="bg-accent text-primary">
-    <q-item-section avatar v-if="icon">
+  <q-item v-ripple clickable active-class="bg-accent text-primary">
+    <q-item-section v-if="icon" avatar>
       <q-avatar :icon :color="iconBackground" :text-color="iconColor" />
     </q-item-section>
 

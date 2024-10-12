@@ -1,10 +1,11 @@
 <template>
   <q-layout view="hHh Lpr fFf">
-    <q-header bordered elevated>
-      <q-toolbar>
+    <q-header elevated>
+      <q-toolbar :class="isDark ? 'bg-dark' : ''">
         <VButton
           v-if="authStore.user"
           @click="toggleLeftDrawer"
+          :color="isDark ? 'primary' : 'accent'"
           flat
           round
           icon="menu"
@@ -38,7 +39,7 @@
     >
       <q-scroll-area class="fit">
         <q-list padding>
-          <q-item clickable v-ripple>
+          <q-item>
             <q-item-section avatar>
               <q-avatar icon="person" color="accent" text-color="white" />
             </q-item-section>
@@ -87,10 +88,11 @@
 
           <q-separator spaced />
 
-          <SidebarItem
-            :label="darkMode.isDark.value ? 'Light Mode' : 'Dark Mode'"
-            :icon="darkMode.isDark.value ? 'light_mode' : 'dark_mode'"
+          <q-toggle
+            v-model="isDark"
             @click="darkMode.toggleDarkMode()"
+            label="Dark Mode"
+            color="accent"
           />
 
           <q-separator spaced />
@@ -109,12 +111,12 @@
     </q-drawer>
 
     <q-page-container>
-      <q-page class="relative q-pa-xl">
+      <q-page class="relative q-pa-lg q-mb-xl">
         <router-view />
-
         <q-page-sticky position="bottom-right" :offset="[18, 18]">
           <VButton
-            v-if="authStore.user"
+            class="mobile-only"
+            v-if="authStore.user && authStore.can.createReports"
             :to="{ name: 'reports.create' }"
             round
             icon="add"
@@ -149,6 +151,12 @@ const leftDrawerOpen = ref(false);
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;
 }
+
+// const isDark = computed(() => {
+//   return darkMode.isDark.value;
+// });
+
+const isDark = ref(darkMode.isDark);
 
 const fullName = computed(() => {
   return `${authStore.user.first_name} ${authStore.user.last_name}`;
