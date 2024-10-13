@@ -15,10 +15,15 @@
     </q-banner>
   </section>
   <section v-else>
-    <div v-if="!appointmentsData.appointments">
+    <div
+      v-if="
+        !appointmentsData.appointments.data ||
+        !appointmentsData.appointments.data.length
+      "
+    >
       No upcoming approved appointments
     </div>
-    <div>
+    <div v-else>
       <VPagination
         v-model="currentPage"
         :max="appointmentsData.appointments.last_page"

@@ -79,7 +79,7 @@
   </section>
 
   <section v-else>
-    <div v-if="!reportsData.reports">No reports found</div>
+    <div v-if="!reportsData.reports.data">No reports found</div>
     <div v-else>
       <VPagination v-model="currentPage" :max="reportsData.reports.last_page" />
       <div class="row q-col-gutter-lg q-mt-sm">

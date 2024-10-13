@@ -45,6 +45,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::controller(AppointmentController::class)->group(function () {
         Route::get('/appointments', 'index')->name('appointments.index');
         Route::get('/appointments/{appointment}', 'show')->name('appointments.show');
+        // Route::patch('/appointments/{appointment}', 'update')->name('appointments.update');
         Route::patch('/appointments/{appointment}', 'update')->name('appointments.update');
     });
 

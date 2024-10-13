@@ -78,9 +78,9 @@
       </q-form>
     </q-card-section>
   </q-card>
-  <span v-if="isPending">Adding report...</span>
-  <span v-else-if="isError">An error occurred: {{ error.message }}</span>
-  <span v-else-if="isSuccess">Report added!</span>
+  <span v-if="isPendingAdd">Adding report...</span>
+  <span v-else-if="isErrorAdd">An error occurred: {{ error.message }}</span>
+  <span v-else-if="isSuccessAdd">Report added!</span>
 </template>
 
 <script setup>
@@ -103,12 +103,12 @@ const {
   errorTimeSlots,
   isLoadingTakenTimeSlots,
   isErrorTakenTimeSlots,
+  refetchTakenTimeSlots,
   errorTakenTimeSlots,
-  isPending,
-  isError,
-  isSuccess,
-  error,
+  isPendingAdd,
+  isErrorAdd,
+  isSuccessAdd,
+  errorAdd,
   add,
-  update,
 } = useDatePicker("reports", form);
 </script>

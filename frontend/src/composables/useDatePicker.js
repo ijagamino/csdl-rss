@@ -30,10 +30,16 @@ export function useDatePicker(url, form, urlId = null) {
     isError: isErrorTakenTimeSlots,
     refetch: refetchTakenTimeSlots,
   } = useQuery({
-    queryKey: ["taken-time-slots", form],
+    queryKey: ["taken-time-slots", form.date],
   });
 
-  const { isPending, isError, error, isSuccess, mutate } = useMutation({
+  const {
+    isPending: isPendingAdd,
+    isError: isErrorAdd,
+    error: errorAdd,
+    isSuccess: isSuccessAdd,
+    mutate: mutateAdd,
+  } = useMutation({
     mutationFn: (form) => api.post(url, form),
     onError: (err) => {
       errors.value = err.response.data.errors;
@@ -50,14 +56,7 @@ export function useDatePicker(url, form, urlId = null) {
   });
 
   function add() {
-    mutate({
-      category: form.category,
-      title: form.title,
-      content: form.content,
-      date: form.date,
-      time: form.time,
-      report_id: form.report_id,
-    });
+    mutateAdd(form);
   }
 
   const {
@@ -84,15 +83,6 @@ export function useDatePicker(url, form, urlId = null) {
 
   function update() {
     mutateUpdate(form);
-    // mutateUpdate({
-    //   category: form.category,
-    //   title: form.title,
-    //   content: form.content,
-    //   date: form.date,
-    //   time: form.time,
-    //   report_id: form.report_id,
-    //   status: form.status,
-    // });
   }
 
   watch(
@@ -116,11 +106,12 @@ export function useDatePicker(url, form, urlId = null) {
     errorTimeSlots,
     isLoadingTakenTimeSlots,
     isErrorTakenTimeSlots,
+    refetchTakenTimeSlots,
     errorTakenTimeSlots,
-    isPending,
-    isError,
-    isSuccess,
-    error,
+    isPendingAdd,
+    isErrorAdd,
+    isSuccessAdd,
+    errorAdd,
     add,
     update,
   };
