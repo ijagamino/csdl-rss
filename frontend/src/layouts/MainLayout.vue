@@ -14,7 +14,7 @@
 
         <q-toolbar-title class="gt-md">
           <VButton flat :rounded="false">
-            <q-avatar color="">
+            <q-avatar>
               <img src="https://placehold.co/40" />
             </q-avatar>
             <span class="q-ml-sm"> RSS </span>
@@ -48,43 +48,18 @@
               <q-item-label caption>{{ authStore.user.email }}</q-item-label>
             </q-item-section>
           </q-item>
+
+          <q-separator spaced />
+
           <q-item-label header>Quick Access</q-item-label>
 
-          <SidebarItem
-            :to="{ name: 'reports.index' }"
-            label="Reports"
-            icon="description"
-          />
-          <SidebarItem
-            :to="{ name: 'schedules.index' }"
-            label="Schedules"
-            icon="schedule"
-          />
-          <SidebarItem
-            :to="{ name: 'archives.index' }"
-            label="Archives"
-            icon="archive"
-          />
+          <DrawerListItems :listItems="quickAccessItems" />
 
           <q-separator spaced />
 
           <q-item-label header>Miscellaneous</q-item-label>
 
-          <SidebarItem
-            :to="{ name: 'about' }"
-            label="About"
-            icon="priority_high"
-          />
-          <SidebarItem
-            :to="{ name: 'help' }"
-            label="Help"
-            icon="question_mark"
-          />
-          <SidebarItem
-            :to="{ name: 'contact-us' }"
-            label="Contact Us"
-            icon="feedback"
-          />
+          <DrawerListItems :listItems="miscellaneousItems" />
 
           <q-separator spaced />
 
@@ -111,7 +86,7 @@
     </q-drawer>
 
     <q-page-container>
-      <q-page class="relative q-pa-lg q-mb-xl">
+      <q-page class="q-pa-lg q-mb-xl">
         <router-view />
         <q-page-sticky position="bottom-right" :offset="[18, 18]">
           <VButton
@@ -133,9 +108,12 @@
         mobile-arrows
         align="justify"
       >
-        <q-route-tab :to="{ name: 'reports.index' }" icon="description" />
-        <q-route-tab :to="{ name: 'schedules.index' }" icon="schedule" />
-        <q-route-tab :to="{ name: 'archives.index' }" icon="archive" />
+        <q-route-tab
+          v-for="routeTab in routeTabs"
+          :key="routeTab.name"
+          :to="{ name: routeTab.name }"
+          :icon="routeTab.icon"
+        />
       </q-tabs>
     </q-footer>
   </q-layout>
@@ -152,13 +130,29 @@ function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;
 }
 
-// const isDark = computed(() => {
-//   return darkMode.isDark.value;
-// });
-
-const isDark = ref(darkMode.isDark);
+const isDark = computed(() => {
+  return darkMode.isDark.value;
+});
 
 const fullName = computed(() => {
   return `${authStore.user.first_name} ${authStore.user.last_name}`;
 });
+
+const quickAccessItems = [
+  { name: "reports.index", label: "Reports", icon: "description" },
+  { name: "schedules.index", label: "Schedules", icon: "schedule" },
+  { name: "archives.index", label: "Archives", icon: "archive" },
+];
+
+const miscellaneousItems = [
+  { name: "about", label: "About", icon: "priority_high" },
+  { name: "help", label: "Help", icon: "question_mark" },
+  { name: "contact-us", label: "Contact Us", icon: "feedback" },
+];
+
+const routeTabs = [
+  { name: "reports.index", icon: "description" },
+  { name: "schedules.index", icon: "schedule" },
+  { name: "archives.index", icon: "archive" },
+];
 </script>
