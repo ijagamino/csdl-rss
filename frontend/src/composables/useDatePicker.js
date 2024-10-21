@@ -30,7 +30,7 @@ export function useDatePicker(url, form, urlId = null) {
     isError: isErrorTakenTimeSlots,
     refetch: refetchTakenTimeSlots,
   } = useQuery({
-    queryKey: ["taken-time-slots", form.date],
+    queryKey: ["taken-time-slots", form],
   });
 
   const {
@@ -101,13 +101,15 @@ export function useDatePicker(url, form, urlId = null) {
   return {
     dateOptions,
     availableTimeSlots,
+    timeSlotsData,
+    errorTimeSlots,
     isLoadingTimeSlots,
     isErrorTimeSlots,
-    errorTimeSlots,
+    takenTimeSlotsData,
+    errorTakenTimeSlots,
     isLoadingTakenTimeSlots,
     isErrorTakenTimeSlots,
     refetchTakenTimeSlots,
-    errorTakenTimeSlots,
     isPendingAdd,
     isErrorAdd,
     isSuccessAdd,

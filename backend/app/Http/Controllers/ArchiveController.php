@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Archive;
 use Illuminate\Http\Request;
 
 class ArchiveController extends Controller
@@ -13,9 +14,15 @@ class ArchiveController extends Controller
     {
         $user = $request->user();
 
-        $archives = $user->reportArchives()
-            ->with('report:id,category,title,content,status')
-            ->with('user:id,first_name,last_name')
+        $archives =
+        $user->can('view all reports')
+        ? Archive::query()
+            ->with('report')
+            ->with('user')
+            ->get()
+        : $user->reportArchives()
+            ->with('report')
+            ->with('user')
             ->get();
 
         return $archives;

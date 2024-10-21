@@ -15,7 +15,33 @@
         <h6>
           {{ schedule }}
         </h6>
+        <div class="text-h6">{{ appointment.report.title }}</div>
       </q-card-section>
+
+      <q-card-actions align="center">
+        <q-btn
+          color="grey"
+          round
+          flat
+          dense
+          :icon="expanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down'"
+          @click="expanded = !expanded"
+        />
+      </q-card-actions>
+
+      <q-slide-transition>
+        <div v-show="expanded">
+          <q-separator />
+          <q-card-section class="text-subtitle2">
+            <div class="text-overline">
+              {{ appointment.report.category }}
+            </div>
+            <div class="text-caption">
+              {{ appointment.report.content }}
+            </div>
+          </q-card-section>
+        </div>
+      </q-slide-transition>
     </q-card>
   </div>
 </template>
@@ -24,6 +50,8 @@
 const props = defineProps({
   appointment: Object,
 });
+
+const expanded = ref(false);
 
 const { formatDate, formatTime } = useDate();
 

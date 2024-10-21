@@ -42,6 +42,11 @@ class User extends Authenticatable
         return $this->hasMany(Report::class);
     }
 
+    public function archives(): HasMany
+    {
+        return $this->hasMany(Archive::class);
+    }
+
     public function reportAppointments(): HasManyThrough
     {
         return $this->hasManyThrough(Appointment::class, Report::class);

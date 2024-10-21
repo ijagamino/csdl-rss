@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(Report::class);
             $table->foreignIdFor(User::class);
-            $table->dateTime('completed_at');
+            $table->boolean('completed')->default(false);
             $table->timestamps();
         });
     }

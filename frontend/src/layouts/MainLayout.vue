@@ -12,8 +12,8 @@
           aria-label="Menu"
         />
 
-        <q-toolbar-title class="gt-md">
-          <VButton flat :rounded="false">
+        <q-toolbar-title>
+          <VButton to="/" flat :rounded="false">
             <q-avatar>
               <img src="https://placehold.co/40" />
             </q-avatar>
@@ -23,7 +23,16 @@
 
         <q-space />
 
-        <VButton v-if="!authStore.user" to="/login" label="Login" />
+        <VButton
+          v-if="!authStore.user"
+          :to="{ name: 'login' }"
+          label="Log In"
+        />
+        <VButton
+          v-if="!authStore.user"
+          :to="{ name: 'register' }"
+          label="Register"
+        />
 
         <VButton v-else label="Log Out" @click="authStore.logout()" />
       </q-toolbar>
@@ -51,15 +60,77 @@
 
           <q-separator spaced />
 
-          <q-item-label header>Quick Access</q-item-label>
+          <div v-if="authStore.can.editUsers">
+            <q-item-label header>Management</q-item-label>
 
-          <DrawerListItems :listItems="quickAccessItems" />
+            <q-item
+              :to="{ name: 'users.index' }"
+              v-ripple
+              clickable
+              active-class="bg-accent text-primary"
+            >
+              <q-item-section avatar>
+                <q-avatar
+                  icon="manage_accounts"
+                  color="accent"
+                  text-color="primary"
+                />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label lines="1"> Users </q-item-label>
+                <q-item-label lines="1" caption>
+                  Manage user roles and permissions
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+          </div>
 
-          <q-separator spaced />
+          <div
+            v-if="
+              authStore.can.viewAllReports ||
+              authStore.can.viewOwnReports ||
+              authStore.can.viewAllAppointments ||
+              authStore.can.viewOwnAppointments ||
+              authStore.can.viewAllArchives ||
+              authStore.can.viewOwnArchives
+            "
+          >
+            <q-item-label header>Quick Access</q-item-label>
+
+            <DrawerListItems :listItems="filteredQuickAccessItems" />
+
+            <q-separator spaced />
+          </div>
 
           <q-item-label header>Miscellaneous</q-item-label>
 
-          <DrawerListItems :listItems="miscellaneousItems" />
+          <q-item
+            v-for="listItem in listItems"
+            :key="listItem.label"
+            :to="{ name: listItem.name }"
+            v-ripple
+            clickable
+            active-class="bg-accent text-primary"
+          >
+            <q-item-section v-if="listItem.icon" avatar>
+              <q-avatar
+                :icon="listItem.icon"
+                color="accent"
+                text-color="primary"
+              />
+            </q-item-section>
+
+            <q-item-section>
+              <q-item-label lines="1">
+                {{ listItem.label }}
+              </q-item-label>
+              <q-item-label v-if="listItem.caption" lines="1" caption>
+                {{ listItem.caption }}
+              </q-item-label>
+            </q-item-section>
+          </q-item>
+
+          <DrawerListItems :listItems="filteredMiscellaneousItems" />
 
           <q-separator spaced />
 
@@ -139,16 +210,62 @@ const fullName = computed(() => {
 });
 
 const quickAccessItems = [
-  { name: "reports.index", label: "Reports", icon: "description" },
-  { name: "schedules.index", label: "Schedules", icon: "schedule" },
-  { name: "archives.index", label: "Archives", icon: "archive" },
+  {
+    name: "reports.index",
+    label: "Reports",
+    icon: "description",
+    show: ["viewOwnReports", "viewAllReports"],
+  },
+  {
+    name: "schedules.index",
+    label: "Schedules",
+    icon: "schedule",
+    show: ["viewOwnAppointments", "viewAllAppointments"],
+  },
+  {
+    name: "archives.index",
+    label: "Archives",
+    icon: "archive",
+    show: ["viewOwnArchives", "viewAllArchives"],
+  },
 ];
 
 const miscellaneousItems = [
   { name: "about", label: "About", icon: "priority_high" },
   { name: "help", label: "Help", icon: "question_mark" },
-  { name: "contact-us", label: "Contact Us", icon: "feedback" },
+  {
+    name: "feedbacks.create",
+    label: "Contact Us",
+    icon: "chat",
+    show: "createFeedbacks",
+  },
+  {
+    name: "feedbacks.index",
+    label: "Feedbacks",
+    icon: "feedback",
+    show: "viewAllFeedbacks",
+  },
 ];
+
+const filterListItems = (list) => {
+  return list.filter((item) => {
+    if (typeof item.show === "string") {
+      return authStore.can[item.show];
+    }
+
+    if (Array.isArray(item.show)) {
+      return item.show.some((permission) => authStore.can[permission]);
+    }
+    return true;
+  });
+};
+
+const filteredQuickAccessItems = computed(() =>
+  filterListItems(quickAccessItems)
+);
+const filteredMiscellaneousItems = computed(() =>
+  filterListItems(miscellaneousItems)
+);
 
 const routeTabs = [
   { name: "reports.index", icon: "description" },

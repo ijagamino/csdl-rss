@@ -6,46 +6,47 @@
         <FormInput
           v-model="form.name"
           label="Name"
-          type="email"
+          bottom-slots
           :error="!!errors.name"
           :errors="errors.name"
         />
         <FormInput
           v-model="form.content"
-          type="textarea"
           label="Message"
+          bottom-slots
           :error="!!errors.content"
           :errors="errors.content"
         />
       </q-form>
-      <VButton @click="addFeedback()" label="send" />
+      <VButton class="w-full" label="Send" @click="submit()" />
     </q-card-section>
   </q-card>
 
   <p class="pt-4">
     or alternatively, call us at:
-    <span>09xx-xxx-xxxx</span>
+    <span class="block text-3xl font-semibold text-blue-800"
+      >09xx-xxx-xxxx</span
+    >
   </p>
 </template>
 
 <script setup>
-import { useQuasar } from "quasar";
-
-const $q = useQuasar();
-
-const errors = ref({});
-
 const form = reactive({
   name: null,
   content: null,
 });
 
-const { isPending, isError, error, isSuccess, mutate } = useMutation({
-  mutationFn: (form) => api.post("/reports", form),
+const errors = ref({});
+
+const { mutate } = useMutation({
+  mutationFn: async () => {
+    await api.post("/feedbacks", form);
+  },
   onError: (err) => {
     errors.value = err.response.data.errors;
   },
   onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ["feedbacks"] });
     $q.notify({
       message: "Feedback sent!",
       color: "positive",
@@ -53,13 +54,7 @@ const { isPending, isError, error, isSuccess, mutate } = useMutation({
   },
 });
 
-function addReport() {
-  mutate({
-    category: form.category,
-    title: form.title,
-    content: form.content,
-    date: form.date,
-    time: form.time,
-  });
-}
+const submit = () => {
+  mutate();
+};
 </script>

@@ -12,7 +12,7 @@ class FeedbackController extends Controller
      */
     public function index()
     {
-        //
+        return Feedback::all();
     }
 
     /**
@@ -28,8 +28,14 @@ class FeedbackController extends Controller
      */
     public function store(Request $request)
     {
+        $attributes = $request->validate([
+            'name' => ['nullable'],
+            'content' => ['required'],
+        ]);
 
-        return redirect('/contact-us');
+        Feedback::create($attributes);
+
+        return response()->noContent();
     }
 
     /**

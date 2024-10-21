@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Appointment;
+use App\Models\Archive;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -28,6 +29,7 @@ class AppointmentController extends Controller
             ->where('status', 'approved')
             ->paginate(6)
         : $user->reportAppointments()
+            ->with('report:id,category,title,content')
             ->where('status', 'approved')
             ->where(fn ($query) => $query
                 ->where('date', '>', $dateToday)
@@ -85,6 +87,23 @@ class AppointmentController extends Controller
             ]);
 
             $appointment->status = $request->status;
+        }
+
+        if ($request->status === 'completed') {
+            $request->validate([
+                'date' => ['required'],
+                'start_time' => ['required'],
+                'end_time' => ['required'],
+                'status' => ['required'],
+            ]);
+
+            $appointment->status = $request->status;
+
+            Archive::create([
+                'report_id' => $appointment->report_id,
+                'user_id' => $request->user()->id,
+                'completed' => true,
+            ]);
         }
 
         if ($request->status === 'cancelled') {

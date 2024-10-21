@@ -20,7 +20,8 @@ class ReportController extends Controller
         $dateToday = Carbon::parse($today)->format('Y-m-d');
         $timeNow = Carbon::parse($today)->format('H:i:s');
 
-        $reports = $user->can('view all reports')
+        $reports =
+        $user->can('view all reports')
         ? Report::query()
             ->with('appointment', fn ($query) => $query
                 ->latest()

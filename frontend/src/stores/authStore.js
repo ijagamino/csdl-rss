@@ -18,7 +18,7 @@ export const useAuthStore = defineStore(
         errors.value = err.response.data.errors;
         $q.notify({
           message: "Log in fail",
-          color: "red",
+          color: "negative",
         });
       },
       onSuccess: async () => {
@@ -27,9 +27,6 @@ export const useAuthStore = defineStore(
         errors.value = {};
         user.value = data.user;
         can.value = data.can;
-
-        console.log(can.value);
-        console.log(data.can);
 
         router.push({ name: "reports.index" });
 

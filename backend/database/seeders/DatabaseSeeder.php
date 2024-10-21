@@ -48,7 +48,9 @@ class DatabaseSeeder extends Seeder
             'last_name' => 'User',
         ])->assignRole('staff');
 
-        User::factory(10)->create();
+        User::factory(10)->create()->each(function ($user) {
+            $user->assignRole('student');
+        });
 
         $this->call([
             ReportSeeder::class,

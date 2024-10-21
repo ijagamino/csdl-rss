@@ -23,19 +23,44 @@
       <h2>Profiles</h2>
     </header>
     <div class="row">
-      <q-item class="col-12 col-lg-6 col-xl-4" clickable v-ripple>
+      <q-item
+        class="col-12 col-lg-6"
+        v-for="member in members"
+        :key="member.name"
+        clickable
+        v-ripple
+      >
         <q-item-section side>
           <q-avatar size="128px">
             <img src="https://placehold.co/400" />
           </q-avatar>
         </q-item-section>
         <q-item-section>
-          <q-item-label>John Doe</q-item-label>
-          <q-item-label caption>Developer</q-item-label>
+          <q-item-label>{{ member.name }}</q-item-label>
+          <q-item-label caption>{{ member.role }}</q-item-label>
         </q-item-section>
       </q-item>
     </div>
   </section>
 </template>
 
-<script setup></script>
+<script setup>
+const members = [
+  {
+    name: "John Doe",
+    role: "Project Manager",
+  },
+  {
+    name: "John Doe",
+    role: "QA Tester",
+  },
+  {
+    name: "John Doe",
+    role: "Frontend Developer",
+  },
+  {
+    name: "Ivan Joshua A. Gamino",
+    role: "Backend Developer",
+  },
+];
+</script>

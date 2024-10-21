@@ -10,8 +10,8 @@ class Feedback extends Model
     use HasFactory;
 
     protected $fillable = [
-        'report_id',
-        'user_id',
+        'name',
+        'content',
     ];
 
     protected $hidden = [

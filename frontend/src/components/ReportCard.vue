@@ -111,10 +111,19 @@
             />
             <VButton
               v-if="
+                authStore.can?.completeAppointments &&
+                report.appointment?.status === 'approved'
+              "
+              @click="completeAppointment()"
+              color="positive"
+              label="Complete"
+            />
+            <VButton
+              v-if="
                 authStore.can?.cancelAppointments &&
                 report.appointment?.status === 'pending'
               "
-              @click="cancelAppointment()"
+              @click="confirmCancelAppointment()"
               color="negative"
               label="cancel"
             />
@@ -123,7 +132,7 @@
                 authStore.can?.deleteReports &&
                 report.appointment?.status === 'cancelled'
               "
-              @click="cancelAppointment()"
+              @click="deleteAppointment()"
               color="negative"
               label="Delete"
             />
@@ -131,6 +140,25 @@
         </div>
       </q-slide-transition>
     </q-card>
+
+    <q-dialog v-model="showDialog" persistent>
+      <q-card>
+        <q-card-section class="row items-center">
+          <q-icon name="warning" color="negative" size="2em" />
+          <span>Are you sure you want to delete this item?</span>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <VButton label="Cancel" color="positive" v-close-popup />
+          <VButton
+            label="Confirm"
+            color="negative"
+            v-close-popup
+            @click="cancelAppointment()"
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
@@ -142,6 +170,8 @@ const props = defineProps({
 const $q = useQuasar();
 const authStore = useAuthStore();
 const queryClient = useQueryClient();
+
+const showDialog = ref(false);
 
 const {
   today,
@@ -162,12 +192,15 @@ const form = reactive({
 const {
   dateOptions,
   availableTimeSlots,
+  timeSlotsData,
+  errorTimeSlots,
   isLoadingTimeSlots,
   isErrorTimeSlots,
-  errorTimeSlots,
+  takenTimeSlotsData,
+  errorTakenTimeSlots,
   isLoadingTakenTimeSlots,
   isErrorTakenTimeSlots,
-  errorTakenTimeSlots,
+  refetchTakenTimeSlots,
   add,
   update,
 } = useDatePicker(
@@ -179,11 +212,20 @@ const {
 const expanded = ref(false);
 
 // changes appointment status to "approved"
-const { isPending, isError, error, isSuccess, mutate } = useMutation({
+const {
+  isPending: isPendingApprove,
+  isError: isErrorApprove,
+  error: errorApprove,
+  isSuccess: isSuccessApprove,
+  mutate: mutateApprove,
+} = useMutation({
   mutationFn: async () => {
     const response = await api.patch(
       `appointments/${props.report.appointment?.id}`,
       {
+        date: props.report.appointment?.date,
+        start_time: props.report.appointment?.start_time,
+        end_time: props.report.appointment?.end_time,
         status: "approved",
       }
     );
@@ -195,6 +237,37 @@ const { isPending, isError, error, isSuccess, mutate } = useMutation({
     queryClient.invalidateQueries({ queryKey: ["reports"] });
     $q.notify({
       message: "Appointment approved.",
+      color: "positive",
+    });
+  },
+});
+
+// changes appointment status to "completed"
+const {
+  isPending: isPendingComplete,
+  isError: isErrorComplete,
+  error: errorComplete,
+  isSuccess: isSuccessComplete,
+  mutate: mutateComplete,
+} = useMutation({
+  mutationFn: async () => {
+    const response = await api.patch(
+      `appointments/${props.report.appointment?.id}`,
+      {
+        date: props.report.appointment?.date,
+        start_time: props.report.appointment?.start_time,
+        end_time: props.report.appointment?.end_time,
+        status: "completed",
+      }
+    );
+  },
+  onError: (err) => {
+    errors.value = err.response.data.errors;
+  },
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ["reports"] });
+    $q.notify({
+      message: "Report completed, moved to archives.",
       color: "positive",
     });
   },
@@ -229,9 +302,16 @@ const {
 });
 
 function approveAppointment() {
-  mutate();
+  mutateApprove();
 }
 
+function completeAppointment() {
+  mutateComplete();
+}
+
+const confirmCancelAppointment = () => {
+  showDialog.value = true;
+};
 function cancelAppointment() {
   mutateCancel();
 }

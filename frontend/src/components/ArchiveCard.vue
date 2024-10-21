@@ -7,7 +7,7 @@
 
       <q-card-section>
         <div class="text-h5 q-mt-sm q-mb-xs">{{ archive.report.title }}</div>
-        <div class="text-caption text-grey">
+        <div class="text-caption">
           {{ archive.report.content }}
         </div>
       </q-card-section>
