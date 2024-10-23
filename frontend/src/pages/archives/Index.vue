@@ -1,33 +1,24 @@
 <template>
-  <Head title="Archives" />
   <PageHeader> Archives </PageHeader>
 
-  <q-input
-    filled
+  <FormInput
     placeholder="Search..."
     type="text"
     v-model="search"
     @keyup="searchInput"
   >
     <template #prepend>
-      <Icon name="search" />
+      <VIcon name="search" />
     </template>
-  </q-input>
-  <section class="mt-6 justify-center flex flex-wrap gap-2">
-    <ArchiveCard v-for="report in reports" :key="report.id" :report />
-    <!-- <ArchiveCard /> -->
-    <!-- <ArchiveCard /> -->
-    <!-- <ArchiveCard /> -->
-    <!-- <ArchiveCard /> -->
+  </FormInput>
+  <section class="row q-col-gutter-lg q-mt-sm">
+    <ArchiveCard v-for="archive in archivesData" :key="archive.id" :archive />
   </section>
 </template>
 
 <script setup>
-import { Head } from "@inertiajs/vue3";
-import { ref } from "vue";
-
-defineProps({
-  reports: Object,
+const { data: archivesData } = useQuery({
+  queryKey: ["archives"],
 });
 
 const search = ref(null);

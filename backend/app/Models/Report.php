@@ -18,6 +18,11 @@ class Report extends Model
         'content',
     ];
 
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+    ];
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -26,5 +31,10 @@ class Report extends Model
     public function appointment(): HasOne
     {
         return $this->hasOne(Appointment::class);
+    }
+
+    public function archive(): HasOne
+    {
+        return $this->hasOne(Archive::class);
     }
 }

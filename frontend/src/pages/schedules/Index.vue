@@ -1,50 +1,66 @@
 <template>
-  <Head title="Schedules" />
   <PageHeader>Schedules</PageHeader>
 
-  <q-select
-    label="Choose a category"
-    :options="options"
-    v-model="search"
-    @change="searchInput"
-  />
-
-  <section class="row">
-    <ScheduleCard class="col-lg-6" />
+  <section v-if="isLoading">
+    <q-banner>
+      <q-spinner size="xl" color="accent" />
+      <p>Loading appointments...</p>
+    </q-banner>
   </section>
 
-  <Card
-    class="min-w-96 aspect-[2/1] grid grid-cols-3 max-w-lg grow"
-    :pt="{
-      header: 'uppercase p-5 content-center text-center',
-      body: 'col-span-2',
-      footer: 'mt-auto font-semibold',
-    }"
-  >
-    <template #header> </template>
-    <template #title> Report Title </template>
-    <template #subtitle> Report Category </template>
-    <template #content>
-      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
-    </template>
-    <template #footer>
-      <footer>Appointed time: 1:00 PM</footer>
-    </template>
-  </Card>
-
-  <!-- Month, year per section-->
-  <section class="mt-4"></section>
+  <section v-else-if="isError">
+    <q-banner type="negative">
+      <q-icon name="error" />
+      Error loading appointments: {{ error.message }}
+    </q-banner>
+  </section>
+  <section v-else>
+    <div
+      v-if="
+        !appointmentsData.appointments.data ||
+        !appointmentsData.appointments.data.length
+      "
+    >
+      No upcoming approved appointments
+    </div>
+    <div v-else>
+      <VPagination
+        v-model="currentPage"
+        :max="appointmentsData.appointments.last_page"
+      />
+      <div class="row q-col-gutter-lg q-mt-sm">
+        <AppointmentCard
+          v-for="appointment in appointmentsData.appointments.data"
+          :key="appointment.id"
+          :appointment
+        />
+      </div>
+    </div>
+  </section>
 </template>
 
 <script setup>
-import { Head } from "@inertiajs/vue3";
-import { ref } from "vue";
+const { categories } = useCategory();
+const route = useRoute();
+const authStore = useAuthStore();
 
-const options = ["Name 1", "Name 2"];
+const routeQuery = computed(() => {
+  return route.query;
+});
 
-const search = ref(null);
+const {
+  data: appointmentsData,
+  error,
+  isLoading,
+  isError,
+  refetch,
+} = useQuery({
+  queryKey: ["appointments", routeQuery],
+});
 
-const searchInput = () => {
-  console.log(search.value);
-};
+const routePage = computed(() => {
+  return Number(route.query.page) || 1;
+});
+
+const currentPage = ref(routePage);
 </script>

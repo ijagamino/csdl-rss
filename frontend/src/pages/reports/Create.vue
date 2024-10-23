@@ -1,129 +1,116 @@
 <template>
-  <Head title="Reporting" />
   <PageHeader> Reporting </PageHeader>
-  <q-form>
-    <q-select
-      placeholder="Choose a category"
-      label="Choose a category"
-      v-model="form.category"
-      :error="form.errors.category"
-      :options="categories"
-    />
-    <q-input
-      label="Title"
-      placeholder="Write the title..."
-      v-model="form.title"
-      :error="form.errors.title"
-    />
-    <q-input
-      label="Content"
-      name="content"
-      placeholder="Write the content..."
-      v-model="form.content"
-      :error="form.errors.content"
-    />
-
-    <q-date
-      minimal
-      label="Date"
-      v-model="form.date"
-      :error="form.errors.date"
-    />
-    <q-select
-      label="Time"
-      placeholder="Choose a time"
-      v-model="form.time"
-      :options="availableSlots"
-      optionLabel="label"
-      optionValue="label"
-      :error="form.errors.time"
-      optionDisabled="disabled"
-    />
-    <Button label="Submit" @click="submit()" />
-  </q-form>
+  <q-card class="">
+    <q-card-section>
+      <q-form class="">
+        <FormSelect
+          v-model="form.category"
+          placeholder="Choose a category"
+          label="Choose a category"
+          :options="categories"
+          :error="!!errors.category"
+          :errors="errors.category"
+        />
+        <FormInput
+          v-model="form.title"
+          label="Title"
+          placeholder="Write the title..."
+          :error="!!errors.title"
+          :errors="errors.title"
+        />
+        <FormInput
+          v-model="form.content"
+          type="textarea"
+          label="Content"
+          placeholder="Write the content..."
+          :error="!!errors.content"
+          :errors="errors.content"
+        />
+        <div class="row q-col-gutter-lg q-mb-lg">
+          <FormInput
+            class="col-12 col-md-6"
+            v-model="form.date"
+            mask="date"
+            bottom-slots
+            hint="YYYY/MM/DD"
+            :error="!!errors.date"
+            :error-message="
+              errors.date?.length > 0 ? errors.date?.join(' ') : ''
+            "
+          >
+            <template #append>
+              <VIcon name="event" class="cursor-pointer">
+                <q-popup-proxy
+                  cover
+                  transition-show="scale"
+                  transition-hide="scale"
+                >
+                  <q-date
+                    v-model="form.date"
+                    :navigation-min-year-month="minDate"
+                    :navigation-max-year-month="maxDate"
+                    :options="dateOptions"
+                    minimal
+                    label="Date"
+                    color="accent"
+                  />
+                </q-popup-proxy>
+              </VIcon>
+            </template>
+          </FormInput>
+          <FormSelect
+            class="col-12 col-md-6"
+            v-model="form.time"
+            :loading="isLoadingTakenTimeSlots"
+            label="Time"
+            placeholder="Choose a time"
+            :disable="!availableTimeSlots || isLoadingTakenTimeSlots"
+            :hint="!form.date ? 'Choose a date first' : ''"
+            :options="availableTimeSlots"
+            optionLabel="label"
+            optionValue="label"
+            optionDisabled="disabled"
+            :error="!!errors.time"
+            :errors="errors.time"
+          />
+        </div>
+        <VButton label="Submit" @click="add()" />
+      </q-form>
+    </q-card-section>
+  </q-card>
+  <span v-if="isPendingAdd">Adding report...</span>
+  <span v-else-if="isErrorAdd">An error occurred: {{ error.message }}</span>
+  <span v-else-if="isSuccessAdd">Report added!</span>
 </template>
 
 <script setup>
-import { Head, useForm } from "@inertiajs/vue3";
-import { computed, watch } from "vue";
-import { useQuasar } from "quasar";
-
 const $q = useQuasar();
+const { today, tomorrow, oneMonthFromNow, minDate, maxDate } = useDate();
+const { categories } = useCategory();
 
-const props = defineProps({
-  timeSlots: Object,
-  formattedSlots: Object,
-  unavailableSlots: Object,
-});
+const errors = ref({});
 
-const date = computed(() => {
-  const dt = new Date(form.date);
-  const year = dt.getFullYear();
-  const month = String(dt.getMonth() + 1).padStart(2, "0"); // Months are zero-indexed
-  const day = String(dt.getDate()).padStart(2, "0");
-
-  return `${year}-${month}-${day}`; // "2024-10-09"
-});
-
-const categories = ["Financial Assistance", "Complaints", "Others"];
-
-const form = useForm({
-  category: null,
-  title: null,
-  content: null,
+const form = reactive({
   date: null,
   time: null,
 });
 
-const submit = () => {
-  form.post(route("reports.store"), {
-    onSuccess: () => {
-      $q.notify({
-        message: "Report created successfully!",
-        color: "positive",
-      });
-    },
-  });
-};
-
-const disabledSlots = computed(() => {
-  if (!props.unavailableSlots[date.value]) {
-    return;
-  }
-  const result = props.unavailableSlots[date.value].slots.map(
-    (slot) => `${slot.startTime} - ${slot.endTime}`,
-  );
-
-  return result;
-});
-
-const availableSlots = computed(() => {
-  return props.timeSlots.map((slot) => ({
-    label: `${slot.startTime} - ${slot.endTime}`,
-    disable: disabledSlots.value?.includes(
-      `${slot.startTime} - ${slot.endTime}`,
-    ),
-  }));
-});
-
-const isTaken = (slot) => {
-  const unavailableForDate = props.unavailableSlots.find(
-    (entry) => entry.date === date.value,
-  );
-
-  // If there are no unavailable slots for the selected date, return false
-  if (!unavailableForDate) {
-    return false;
-  }
-
-  // Check if the slot is in the unavailable slots for that date
-  return unavailableForDate.slots.includes(slot);
-};
-
-watch(
-  () => form.date,
-  () => {
-    form.time = null;
-  },
-);
+const {
+  dateOptions,
+  availableTimeSlots,
+  timeSlotsData,
+  errorTimeSlots,
+  isLoadingTimeSlots,
+  isErrorTimeSlots,
+  takenTimeSlotsData,
+  errorTakenTimeSlots,
+  isLoadingTakenTimeSlots,
+  isErrorTakenTimeSlots,
+  refetchTakenTimeSlots,
+  isPendingAdd,
+  isErrorAdd,
+  isSuccessAdd,
+  errorAdd,
+  add,
+} = useDatePicker("reports", form);
 </script>

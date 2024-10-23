@@ -1,19 +1,12 @@
 <template>
-  <q-btn color="primary" :class="classes" :active v-bind="$attrs" />
+  <q-btn rounded color="accent" :outline="inactive" :active>
+    <slot />
+  </q-btn>
 </template>
 
 <script setup>
-import { computed } from "vue";
-
-defineOptions({
-  inheritAttrs: false,
-});
-
 const props = defineProps({
   active: Boolean,
+  inactive: Boolean,
 });
-
-const classes = computed(() => ({
-  "bg-dark": props.active,
-}));
 </script>

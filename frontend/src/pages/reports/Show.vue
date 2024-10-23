@@ -1,20 +1,25 @@
 <template>
-  <Head title="Reports" />
-  <!-- <template #header> Report #{{ report.id }} </template> -->
-  <!-- <div class="mt-8 flex flex-wrap px-4 gap-8"> -->
-  <!-- <ReportCard :report :startTime :endTime /> -->
-  <div class="row">
-    <ReportCard :report :appointment />
+  <div v-if="isLoading">Loading...</div>
+  <div v-else-if="isError">Error: {{ error.message }}</div>
+  <div v-else class="row">
+    <ReportCardExpanded :report="reportData" />
   </div>
-  <!-- </div> -->
 </template>
 
 <script setup>
-import { Head } from "@inertiajs/vue3";
-import ReportCard from "@/components/ReportCard.vue";
+const route = useRoute();
 
-defineProps({
-  report: Object,
-  appointment: Object,
+const routeParams = computed(() => {
+  return route.params;
+});
+
+const {
+  data: reportData,
+  error,
+  isLoading,
+  isError,
+  refetch,
+} = useQuery({
+  queryKey: [`reports/${route.params.id}`],
 });
 </script>

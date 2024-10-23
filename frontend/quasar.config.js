@@ -18,7 +18,7 @@ module.exports = configure(function (/* ctx */) {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli-vite/boot-files
-    boot: ["axios"],
+    boot: ["axios", "vue-query"],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#css
     css: ["app.scss"],
@@ -85,9 +85,32 @@ module.exports = configure(function (/* ctx */) {
             ],
             imports: [
               // presets
+              "@vueuse/core",
               "vue",
               "vue-router",
-              "@vueuse/core",
+              "pinia",
+              "quasar",
+              {
+                "@tanstack/vue-query": [
+                  "useInfiniteQuery",
+                  "useMutation",
+                  "useQuery",
+                  "useQueryClient",
+                ],
+                "@vueuse/core": [
+                  // named imports
+                  "useMouse", // import { useMouse } from '@vueuse/core',
+                  // alias
+                  ["useFetch", "useMyFetch"], // import { useFetch as useMyFetch } from '@vueuse/core',
+                ],
+                "pinia-plugin-persistedstate": [
+                  ["default", "piniaPluginPersistedstate"],
+                ],
+                axios: [
+                  ["default", "axios"], // import { default as axios } from 'axios',
+                ],
+                "boot/axios": ["api"],
+              },
             ],
             dirs: [
               // './hooks',
@@ -127,7 +150,13 @@ module.exports = configure(function (/* ctx */) {
       // directives: [],
 
       // Quasar plugins
-      plugins: [],
+      plugins: ["Notify"],
+      config: {
+        notify: {
+          /* look at QuasarConfOptions from the API card */
+        },
+        dark: "auto",
+      },
     },
 
     // animations: 'all', // --- includes all animations

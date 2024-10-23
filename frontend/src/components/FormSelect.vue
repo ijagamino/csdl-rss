@@ -1,23 +1,18 @@
 <template>
-  <div>
-    <label :for="id" v-text="label" />
-    <Select :id v-bind="$attrs" fluid>
-      <template #dropdownicon>
-        <i class="pi pi-caret-down" />
-      </template>
-    </Select>
-    <span class="text-sm italic text-red-500" v-if="error" v-text="error" />
-  </div>
+  <q-select v-model="model" bottom-slots :error-message="errorMessage" />
 </template>
 
 <script setup>
-defineOptions({
-  inheritAttrs: false,
+const model = defineModel();
+
+const errorMessage = computed(() => {
+  if (!props.errors) {
+    return;
+  }
+  return props.errors.length > 0 ? props.errors.join(" ") : "";
 });
 
-defineProps({
-  id: String,
-  label: String,
-  error: String,
+const props = defineProps({
+  errors: Array,
 });
 </script>

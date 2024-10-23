@@ -28,7 +28,9 @@ class ReportPolicy
      */
     public function create(User $user): bool
     {
-        return $user->role === 'student';
+        return $user->can('create reports');
+
+        // return $user->role === 'student';
     }
 
     /**

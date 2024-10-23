@@ -1,5 +1,4 @@
 <template>
-  <Head title="Contact" />
   <PageHeader> Contact Us </PageHeader>
   <Card class="flex gap-2">
     <template #content>
@@ -34,8 +33,6 @@
 </template>
 
 <script setup>
-import { Head, useForm } from "@inertiajs/vue3";
-
 const form = useForm({
   name: null,
   content: null,

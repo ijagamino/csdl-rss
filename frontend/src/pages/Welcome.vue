@@ -1,31 +1,42 @@
 <template>
-  <section class="mx-auto">
-    <img src="https://placehold.co/600x400" alt="" />
-  </section>
+  <div class="text-center">
+    <div class="row q-col-gutter-lg justify-center">
+      <div class="col-12 col-md-6 justify-center">
+        <q-img src="https://placehold.co/600x400" alt="" />
+      </div>
 
-  <header class="mt-12">
-    <h1 class="uppercase text-4xl text-center font-bold">
-      <span class="block">CSDL</span>
-      <span class="block">Report & Support System</span>
-    </h1>
+      <div class="column col-12 col-md-6 justify-between">
+        <header class="text-uppercase">
+          <h1 class="text-h4">
+            <span class="block">CSDL</span>
+          </h1>
 
-    <p class="mt-8 block text-center">
-      Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatem non
-      vel quidem?
-    </p>
-  </header>
+          <h2 class="text-h5">
+            <span class="block">Report & Support System</span>
+          </h2>
+        </header>
 
-  <div class="mt-12 flex flex-col font-bold text-xl lg:flex-row gap-4">
-    <VButton
-      class="w-full bg-gradient-to-r from-primary-200 to-primary-900 text-white uppercase font-bold border-2 border-black text-xl"
-      label="start"
-    />
+        <p class="text-subtitle1">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatem
+          non vel quidem?
+        </p>
 
-    <VButton
-      @click="getMessageWithAxios()"
-      label="Later"
-      class="w-full bg-primary-200"
-    />
+        <div class="row q-col-gutter-lg">
+          <div class="col-12 col-md-6">
+            <VButton class="full-width" label="start" />
+          </div>
+
+          <div class="col-12 col-md-6">
+            <VButton
+              class="full-width"
+              @click="getMessageWithAxios()"
+              label="Later"
+              color="secondary"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 

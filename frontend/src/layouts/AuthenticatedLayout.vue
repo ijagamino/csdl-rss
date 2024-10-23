@@ -6,14 +6,24 @@
 
         <q-toolbar-title>
           <q-avatar>
-            <img src="https://cdn.quasar.dev/logo-v2/svg/logo-mono-white.svg" />
+            <img src="https://placehold.co/40" />
           </q-avatar>
           RSS
         </q-toolbar-title>
+
+        <VButton
+          to="/login"
+          color="accent"
+          label="Login"
+          v-if="!authStore.user"
+        />
+
+        <q-btn label="Log Out" @click="authStore.logout()" v-else />
       </q-toolbar>
+
     </q-header>
 
-    <q-drawer v-model="leftDrawerOpen" side="left" overlay bordered>
+    <q-drawer v-model="leftDrawerOpen" overlay bordered>
       <SidebarPanel />
     </q-drawer>
 
@@ -23,30 +33,7 @@
         <ReportCreateButton v-if="$page.url !== '/reports/create'" />
       </q-page>
     </q-page-container>
-
-    <q-footer bordered class="lt-md bg-dark">
-      <q-btn-group push square spread>
-        <Button
-          @click="$inertia.get(route('dashboard.index'))"
-          icon="dashboard"
-          size="xl"
-          push
-        />
-        <Button
-          @click="$inertia.get(route('schedules.index'))"
-          icon="schedule"
-          size="xl"
-          push
-        />
-        <Button
-          @click="$inertia.get(route('archives.index'))"
-          icon="archive"
-          size="xl"
-          push
-        />
-      </q-btn-group>
-    </q-footer>
-  </q-layout>
+</q-layout>
 </template>
 
 <script setup>
