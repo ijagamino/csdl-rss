@@ -132,7 +132,7 @@
                 authStore.can?.deleteReports &&
                 report.appointment?.status === 'cancelled'
               "
-              @click="deleteAppointment()"
+              @click="confirmDeleteReport()"
               color="negative"
               label="Delete"
             />
@@ -141,20 +141,39 @@
       </q-slide-transition>
     </q-card>
 
-    <q-dialog v-model="showDialog" persistent>
+    <q-dialog v-model="showCancelDialog" persistent>
       <q-card>
         <q-card-section class="row items-center">
           <q-icon name="warning" color="negative" size="2em" />
-          <span>Are you sure you want to delete this item?</span>
+          <span>Are you sure you want to cancel this appointment?</span>
         </q-card-section>
 
         <q-card-actions align="right">
-          <VButton label="Cancel" color="positive" v-close-popup />
+          <VButton label="No" color="positive" v-close-popup />
           <VButton
-            label="Confirm"
+            label="Yes, cancel"
             color="negative"
             v-close-popup
             @click="cancelAppointment()"
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+
+    <q-dialog v-model="showDeleteDialog" persistent>
+      <q-card>
+        <q-card-section class="row items-center">
+          <q-icon name="warning" color="negative" size="2em" />
+          <span>Are you sure you want to delete this report?</span>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <VButton label="No, cancel" color="positive" v-close-popup />
+          <VButton
+            label="Yes, delete"
+            color="negative"
+            v-close-popup
+            @click="deleteReport()"
           />
         </q-card-actions>
       </q-card>
@@ -171,7 +190,8 @@ const $q = useQuasar();
 const authStore = useAuthStore();
 const queryClient = useQueryClient();
 
-const showDialog = ref(false);
+const showCancelDialog = ref(false);
+const showDeleteDialog = ref(false);
 
 const {
   today,
@@ -310,7 +330,7 @@ function completeAppointment() {
 }
 
 const confirmCancelAppointment = () => {
-  showDialog.value = true;
+  showCancelDialog.value = true;
 };
 function cancelAppointment() {
   mutateCancel();
@@ -340,6 +360,9 @@ const {
   },
 });
 
+const confirmDeleteReport = () => {
+  showDeleteDialog.value = true;
+};
 function deleteReport() {
   mutateDelete();
 }

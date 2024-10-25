@@ -27,41 +27,32 @@
     </q-list>
   </q-btn-dropdown>
 
-  <section class="row justify-between">
-    <div>
-      <q-btn-group class="mobile-hide q-mb-sm" outline>
-        <VButton
-          :inactive="$route.query.status?.length > 0"
-          to="?"
-          label="All"
-        />
-        <VButton
-          :inactive="$route.query.status !== 'pending'"
-          :to="queryStatus('pending')"
-          label="Pending"
-        />
-        <VButton
-          :inactive="$route.query.status !== 'approved'"
-          :to="queryStatus('approved')"
-          label="Approved"
-        />
-        <VButton
-          :inactive="$route.query.status !== 'cancelled'"
-          :to="queryStatus('cancelled')"
-          label="Cancelled"
-        />
-      </q-btn-group>
-    </div>
-
-    <div>
+  <section class="row">
+    <q-btn-group class="mobile-hide q-mb-sm" outline>
       <VButton
         class="mobile-hide"
         :to="{ name: 'reports.create' }"
         icon="add"
+        color="positive"
         :rounded="false"
-        size="xl"
       />
-    </div>
+      <VButton :inactive="$route.query.status?.length > 0" to="?" label="All" />
+      <VButton
+        :inactive="$route.query.status !== 'pending'"
+        :to="queryStatus('pending')"
+        label="Pending"
+      />
+      <VButton
+        :inactive="$route.query.status !== 'approved'"
+        :to="queryStatus('approved')"
+        label="Approved"
+      />
+      <VButton
+        :inactive="$route.query.status !== 'cancelled'"
+        :to="queryStatus('cancelled')"
+        label="Cancelled"
+      />
+    </q-btn-group>
   </section>
 
   <section v-if="isLoading">

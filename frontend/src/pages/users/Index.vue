@@ -1,14 +1,6 @@
 <template>
   <PageHeader>Users</PageHeader>
 
-  <!-- <FormSelect -->
-  <!--   class="col-12 col-md-6" -->
-  <!--   v-model="selectedRole" -->
-  <!--   label="Role" -->
-  <!--   placeholder="Choose a time" -->
-  <!--   :options="rolesData" -->
-  <!--   optionDisabled="disabled" -->
-  <!-- /> -->
   <div v-if="isLoadingUsers">Loading...</div>
 
   <div v-else-if="isErrorUsers">

@@ -172,7 +172,7 @@
       </q-page>
     </q-page-container>
 
-    <q-footer bordered class="lt-md bg-dark">
+    <q-footer v-if="authStore.user" bordered class="lt-md bg-dark">
       <q-tabs
         active-color="primary"
         active-bg-color="accent"
