@@ -38,9 +38,17 @@ export default route(function (/* { store, ssrContext } */) {
     // check here for 401 unauthorized responses
     if (
       authStore.user &&
+      (authStore.can.viewAllReports || authStore.can.viewOwnReports) &&
       (to.path === "/" || to.path === "/login" || to.path === "/register")
     ) {
       return next({ name: "reports.index" });
+    }
+    if (
+      authStore.user &&
+      authStore.can.editUsers &&
+      (to.path === "/" || to.path === "/login" || to.path === "/register")
+    ) {
+      return next({ name: "users.index" });
     }
     return next();
   });

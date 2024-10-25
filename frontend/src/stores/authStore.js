@@ -28,7 +28,7 @@ export const useAuthStore = defineStore(
         user.value = data.user;
         can.value = data.can;
 
-        router.push({ name: "reports.index" });
+        router.push("/");
 
         $q.notify({
           message: "Logged in successfully!",

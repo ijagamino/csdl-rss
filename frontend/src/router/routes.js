@@ -16,28 +16,10 @@ const authCan = (to, from, next, permissions) => {
   }
 };
 
-const isAdmin = () => {
-  const authStore = useAuthStore();
-
-  if (!authStore.user) {
-    return false;
-  }
-  if (!authStore.can?.editUsers) {
-    return false;
-  }
-  return true;
-};
-
 const routes = [
   {
     path: "/",
     component: () => import("layouts/MainLayout.vue"),
-    // beforeEnter: (to, from, next) => {
-    //   if (isAdmin()) {
-    //     return next({ name: "users.index" });
-    //   }
-    //   next();
-    // },
     children: [
       {
         path: "",
