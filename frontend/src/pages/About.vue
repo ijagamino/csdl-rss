@@ -1,21 +1,12 @@
 <template>
-  <PageHeader> About </PageHeader>
+  <PageHeader>Details About the Team</PageHeader>
 
-  <section class="grid grid-cols-2 lg:flex gap-2">
-    <div>
-      <header class="uppercase">
-        <h2 class="text-lg font-semibold">Details About the Team</h2>
-      </header>
-      <p>
-        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Illo rerum
-        esse ad!
-      </p>
-    </div>
-    <img
-      class="rounded-xl border-2 border-black"
-      src="https://placehold.co/400"
-      alt=""
-    />
+  <section class="row">
+    <p class="col-12">
+      This system is dedicated to the Center for Student Development and
+      Leadership (CSDL) office of Phinma-Araullo University.
+    </p>
+    <img class="col-12 col-md-6" src="~assets/csdl.jpg" alt="" />
   </section>
 
   <section class="mt-4">
@@ -32,7 +23,8 @@
       >
         <q-item-section side>
           <q-avatar size="128px">
-            <img src="https://placehold.co/400" />
+            <img :src="member.image" alt="" />
+            <!-- <img :src="member.image" alt="" /> -->
           </q-avatar>
         </q-item-section>
         <q-item-section>
@@ -45,21 +37,28 @@
 </template>
 
 <script setup>
+// import feImage from "@/assets/fe.png";
+
 const members = [
   {
-    name: "John Doe",
+    image: new URL("../assets/pm.jpg", import.meta.url).href,
+    name: "Brienzell Kate Calpito",
     role: "Project Manager",
+    link: "https://www.facebook.com/kitkit.342944",
   },
   {
-    name: "John Doe",
+    image: new URL("../assets/qa.jpg", import.meta.url).href,
+    name: "Demi Rei Angeline Villareal",
     role: "QA Tester",
   },
   {
-    name: "John Doe",
+    image: new URL("../assets/fe.jpg", import.meta.url).href,
+    name: "Luis Lei Pagdanganan",
     role: "Frontend Developer",
   },
   {
-    name: "Ivan Joshua A. Gamino",
+    image: "https://placehold.co/400",
+    name: "Ivan Joshua Gamino",
     role: "Backend Developer",
   },
 ];
