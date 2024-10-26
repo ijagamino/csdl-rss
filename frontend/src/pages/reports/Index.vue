@@ -8,22 +8,16 @@
     menu-self="top start"
   >
     <q-list>
-      <DropdownItem :to="queryStatus('')" icon="folder" label="All" />
-      <DropdownItem
-        :to="queryStatus('pending')"
-        icon="hourglass_top"
-        label="Pending"
-      />
-      <DropdownItem
-        :to="queryStatus('approved')"
-        icon="check"
-        label="Approved"
-      />
-      <DropdownItem
-        :to="queryStatus('cancelled')"
-        icon="block"
-        label="Cancelled"
-      />
+      <q-item :class="isDark ? '' : 'text-accent'" v-for="filter in filters" :key="filter.route" :to="filter.route" v-close-popup clickable>
+        <q-item-section avatar>
+          <q-avatar :icon="filter.icon" text-color="accent" />
+        </q-item-section>
+        <q-item-section>
+          <q-item-label>
+            {{ filter.label }}
+          </q-item-label>
+        </q-item-section>
+      </q-item>
     </q-list>
   </q-btn-dropdown>
 
@@ -88,6 +82,11 @@
 
 <script setup>
 const route = useRoute();
+const darkMode = useDarkMode();
+
+const isDark = computed(() => {
+  return darkMode.isDark.value;
+});
 
 // needed in order to trigger a refetch when urlchanges
 const routeQuery = computed(() => {
@@ -113,6 +112,24 @@ const queryStatus = (status) => {
     },
   };
 };
+
+const filters = [
+  {
+    route: queryStatus('pending'),
+    icon: "hourglass_top",
+    label: "Pending",
+  },
+  {
+    route: queryStatus('approved'),
+    icon: "check",
+    label: "Approved",
+  },
+  {
+    route: queryStatus('cancelled'),
+    icon: "block",
+    label: "Cancelled",
+  },
+]
 
 const routePage = computed(() => {
   return Number(route.query.page) || 1;
