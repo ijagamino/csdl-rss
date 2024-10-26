@@ -13,12 +13,14 @@
         />
 
         <q-toolbar-title>
-          <VButton to="/" flat :rounded="false">
-            <q-avatar>
-              <img src="https://placehold.co/40" />
-            </q-avatar>
-            <span class="q-ml-sm"> RSS </span>
-          </VButton>
+          <q-item to="/">
+            <q-item-section avatar>
+              <q-img src="https://placehold.co/40" style="border-radius: 50%"/>
+            </q-item-section>
+            <q-item-section>
+              <span class="text-accent"> RSS </span>
+            </q-item-section>
+          </q-item>
         </q-toolbar-title>
 
         <q-space />
