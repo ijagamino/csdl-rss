@@ -8,6 +8,7 @@
     menu-self="top start"
   >
     <q-list>
+<<<<<<< HEAD
       <q-item :class="isDark ? '' : 'text-accent'" v-for="filter in filters" :key="filter.route" :to="filter.route" v-close-popup clickable>
         <q-item-section avatar>
           <q-avatar :icon="filter.icon" text-color="accent" />
@@ -18,6 +19,25 @@
           </q-item-label>
         </q-item-section>
       </q-item>
+=======
+      <DropdownItem :to="queryStatus('')" icon="folder" label="All" />
+      <DropdownItem
+        :to="queryStatus('pending')"
+        icon="hourglass_top"
+        label="Pending"
+      />
+      <DropdownItem
+        :to="queryStatus('approved')"
+        icon="check"
+        label="Approved"
+      />
+      <DropdownItem
+        v-if="authStore.can.viewOwnReports"
+        :to="queryStatus('cancelled')"
+        icon="block"
+        label="Cancelled"
+      />
+>>>>>>> a51fc3c (fix: remove register, admin cannot disable own role, add role-based viewing on report page)
     </q-list>
   </q-btn-dropdown>
 
@@ -25,6 +45,7 @@
     <q-btn-group class="mobile-hide q-mb-sm" outline>
       <VButton
         class="mobile-hide"
+        v-if="authStore.can.createReports"
         :to="{ name: 'reports.create' }"
         icon="add"
         color="positive"
@@ -42,6 +63,7 @@
         label="Approved"
       />
       <VButton
+        v-if="authStore.can.viewOwnReports"
         :inactive="$route.query.status !== 'cancelled'"
         :to="queryStatus('cancelled')"
         label="Cancelled"
@@ -82,11 +104,15 @@
 
 <script setup>
 const route = useRoute();
+<<<<<<< HEAD
 const darkMode = useDarkMode();
 
 const isDark = computed(() => {
   return darkMode.isDark.value;
 });
+=======
+const authStore = useAuthStore();
+>>>>>>> a51fc3c (fix: remove register, admin cannot disable own role, add role-based viewing on report page)
 
 // needed in order to trigger a refetch when urlchanges
 const routeQuery = computed(() => {

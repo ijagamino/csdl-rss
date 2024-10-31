@@ -12,6 +12,7 @@
           aria-label="Menu"
         />
 
+<<<<<<< HEAD
         <q-toolbar-title>
           <q-item to="/">
             <q-item-section avatar>
@@ -21,6 +22,15 @@
               <span class="text-accent"> RSS </span>
             </q-item-section>
           </q-item>
+=======
+        <q-toolbar-title class="mobile-hide">
+          <VButton to="/" flat :rounded="false">
+            <q-avatar>
+              <img src="https://placehold.co/40" />
+            </q-avatar>
+            <span class="q-ml-sm"> RSS </span>
+          </VButton>
+>>>>>>> a51fc3c (fix: remove register, admin cannot disable own role, add role-based viewing on report page)
         </q-toolbar-title>
 
         <q-space />
@@ -30,11 +40,11 @@
           :to="{ name: 'login' }"
           label="Log In"
         />
-        <VButton
-          v-if="!authStore.user"
-          :to="{ name: 'register' }"
-          label="Register"
-        />
+        <!-- <VButton -->
+        <!--   v-if="!authStore.user" -->
+        <!--   :to="{ name: 'register' }" -->
+        <!--   label="Register" -->
+        <!-- /> -->
 
         <VButton v-else label="Log Out" @click="authStore.logout()" />
       </q-toolbar>

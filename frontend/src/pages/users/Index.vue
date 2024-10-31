@@ -81,6 +81,7 @@
 <script setup>
 const $q = useQuasar();
 const queryClient = useQueryClient();
+const authStore = useAuthStore();
 
 const showEditDialog = ref(false);
 const selectedRoles = ref([]);
@@ -133,7 +134,6 @@ watch(
 );
 
 const openEditDialog = (user) => {
-  console.log(user);
   selectedUser.value = user;
   selectedRoles.value = [...user.roles]; // Clone the user's roles
   showEditDialog.value = true;
@@ -141,11 +141,11 @@ const openEditDialog = (user) => {
 
 const roles = ref([]);
 
-// const rolesOptions = ref([]);
 const rolesOptions = computed(() => {
   return rolesData.value.map((role) => ({
     label: role,
     value: role,
+    disable: role === "admin" && selectedUser.value.id === authStore.user.id,
   }));
 });
 
@@ -168,7 +168,7 @@ const {
     queryClient.invalidateQueries({ queryKey: ["users"] });
 
     $q.notify({
-      message: "Request successful!",
+      message: "Role changed successfully.",
       color: "positive",
     });
   },
