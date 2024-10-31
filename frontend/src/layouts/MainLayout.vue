@@ -12,8 +12,7 @@
           aria-label="Menu"
         />
 
-<<<<<<< HEAD
-        <q-toolbar-title>
+        <q-toolbar-title class="mobile-hide">
           <q-item to="/">
             <q-item-section avatar>
               <q-img src="https://placehold.co/40" style="border-radius: 50%"/>
@@ -22,15 +21,6 @@
               <span class="text-accent"> RSS </span>
             </q-item-section>
           </q-item>
-=======
-        <q-toolbar-title class="mobile-hide">
-          <VButton to="/" flat :rounded="false">
-            <q-avatar>
-              <img src="https://placehold.co/40" />
-            </q-avatar>
-            <span class="q-ml-sm"> RSS </span>
-          </VButton>
->>>>>>> a51fc3c (fix: remove register, admin cannot disable own role, add role-based viewing on report page)
         </q-toolbar-title>
 
         <q-space />

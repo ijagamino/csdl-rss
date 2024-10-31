@@ -8,8 +8,15 @@
     menu-self="top start"
   >
     <q-list>
-<<<<<<< HEAD
-      <q-item :class="isDark ? '' : 'text-accent'" v-for="filter in filters" :key="filter.route" :to="filter.route" v-close-popup clickable>
+      <q-item
+        :class="isDark ? '' : 'text-accent'"
+        v-for="filter in filteredFilterItems"
+        :key="filter.route"
+        :to="filter.route"
+        :show="filter.show"
+        v-close-popup
+        clickable
+      >
         <q-item-section avatar>
           <q-avatar :icon="filter.icon" text-color="accent" />
         </q-item-section>
@@ -19,25 +26,22 @@
           </q-item-label>
         </q-item-section>
       </q-item>
-=======
-      <DropdownItem :to="queryStatus('')" icon="folder" label="All" />
-      <DropdownItem
-        :to="queryStatus('pending')"
-        icon="hourglass_top"
-        label="Pending"
-      />
-      <DropdownItem
-        :to="queryStatus('approved')"
-        icon="check"
-        label="Approved"
-      />
-      <DropdownItem
-        v-if="authStore.can.viewOwnReports"
-        :to="queryStatus('cancelled')"
-        icon="block"
-        label="Cancelled"
-      />
->>>>>>> a51fc3c (fix: remove register, admin cannot disable own role, add role-based viewing on report page)
+      <!-- <DropdownItem :to="queryStatus('')" icon="folder" label="All" /> -->
+      <!-- <DropdownItem -->
+      <!--   :to="queryStatus('pending')" -->
+      <!--   icon="hourglass_top" -->
+      <!--   label="Pending" -->
+      <!-- /> -->
+      <!-- <DropdownItem -->
+      <!--   :to="queryStatus('approved')" -->
+      <!--   icon="check" -->
+      <!--   label="Approved" -->
+      <!-- /> -->
+      <!-- <DropdownItem -->
+      <!--   v-if="authStore.can.viewOwnReports" -->
+      <!--   :to="queryStatus('cancelled')" -->
+      <!--   icon="block" -->
+      <!--   label="Cancelled" -->
     </q-list>
   </q-btn-dropdown>
 
@@ -104,15 +108,12 @@
 
 <script setup>
 const route = useRoute();
-<<<<<<< HEAD
 const darkMode = useDarkMode();
 
 const isDark = computed(() => {
   return darkMode.isDark.value;
 });
-=======
 const authStore = useAuthStore();
->>>>>>> a51fc3c (fix: remove register, admin cannot disable own role, add role-based viewing on report page)
 
 // needed in order to trigger a refetch when urlchanges
 const routeQuery = computed(() => {
@@ -141,21 +142,37 @@ const queryStatus = (status) => {
 
 const filters = [
   {
-    route: queryStatus('pending'),
+    route: queryStatus("pending"),
     icon: "hourglass_top",
     label: "Pending",
   },
   {
-    route: queryStatus('approved'),
+    route: queryStatus("approved"),
     icon: "check",
     label: "Approved",
   },
   {
-    route: queryStatus('cancelled'),
+    route: queryStatus("cancelled"),
     icon: "block",
     label: "Cancelled",
+    show: "viewOwnReports",
   },
-]
+];
+
+const filterListItems = (list) => {
+  return list.filter((item) => {
+    if (typeof item.show === "string") {
+      return authStore.can[item.show];
+    }
+
+    if (Array.isArray(item.show)) {
+      return item.show.some((permission) => authStore.can[permission]);
+    }
+    return true;
+  });
+};
+
+const filteredFilterItems = computed(() => filterListItems(filters));
 
 const routePage = computed(() => {
   return Number(route.query.page) || 1;
